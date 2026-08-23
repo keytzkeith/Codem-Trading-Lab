@@ -1,0 +1,6 @@
+{
+  "name": "Codem Trading Lab",
+  "description": "Trading Research Dashboard, Strategy Backtest Engine & One-Click WhatsApp Publishing System.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
