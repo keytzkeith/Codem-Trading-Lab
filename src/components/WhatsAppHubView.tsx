@@ -41,7 +41,7 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
 }) => {
   const [selectedExpId, setSelectedExpId] = useState<string>(experiments[0]?.id || '');
   const [selectedTemplate, setSelectedTemplate] = useState<WhatsAppTemplateId>('standard_summary');
-  const [cardTheme, setCardTheme] = useState<'cyber_dark' | 'midnight_stealth' | 'emerald_terminal'>('cyber_dark');
+  const [cardTheme, setCardTheme] = useState<'codem_orange' | 'cyber_dark' | 'midnight_stealth' | 'emerald_terminal'>('codem_orange');
   const [customNote, setCustomNote] = useState('');
   const [copiedText, setCopiedText] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -248,11 +248,12 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
           {/* 3. Card Visual Style */}
           <div className="p-3.5 rounded bg-[#111111] border border-[#222222] space-y-2">
             <label className="block text-[10px] font-bold uppercase tracking-wider text-[#888] flex items-center gap-1.5 font-mono">
-              <Palette className="w-3 h-3 text-[#00FF00]" />
-              Visual Card Card Theme
+              <Palette className="w-3 h-3 text-[#FF6A00]" />
+              Visual Card Theme
             </label>
-            <div className="grid grid-cols-3 gap-1.5 font-mono">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 font-mono">
               {[
+                { id: 'codem_orange', label: '🔥 Codem Orange' },
                 { id: 'cyber_dark', label: 'Terminal Dark' },
                 { id: 'emerald_terminal', label: 'Neon Green' },
                 { id: 'midnight_stealth', label: 'Monochrome' },
@@ -262,7 +263,7 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
                   onClick={() => setCardTheme(theme.id as any)}
                   className={`p-1.5 rounded text-[10px] text-center border font-medium transition-all ${
                     cardTheme === theme.id
-                      ? 'bg-[#1A1A1A] border-[#00FF00] text-[#00FF00] font-bold'
+                      ? 'bg-[#1A1A1A] border-[#FF6A00] text-[#FF6A00] font-bold shadow-[0_0_8px_rgba(255,106,0,0.2)]'
                       : 'bg-[#141414] border-[#222222] text-[#777]'
                   }`}
                 >

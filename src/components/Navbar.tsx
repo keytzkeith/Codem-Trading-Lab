@@ -13,14 +13,19 @@ import {
   Trash2,
   Settings,
   ChevronDown,
+  Cloud,
 } from 'lucide-react';
 import { Experiment } from '../types/trade';
 import { calculateGlobalStats } from '../utils/calculations';
+import { SyncStatusBadge } from './SyncStatusBadge';
+import { CodemLogo } from './CodemLogo';
 
 interface NavbarProps {
   activeTab: 'overview' | 'experiments' | 'analytics' | 'whatsapp_hub';
   setActiveTab: (tab: 'overview' | 'experiments' | 'analytics' | 'whatsapp_hub') => void;
   experiments: Experiment[];
+  isSyncing: boolean;
+  onOpenAuth: () => void;
   onOpenNewExperiment: () => void;
   onOpenMt5Import: () => void;
   onResetData: () => void;
@@ -32,6 +37,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   experiments,
+  isSyncing,
+  onOpenAuth,
   onOpenNewExperiment,
   onOpenMt5Import,
   onResetData,
@@ -71,23 +78,14 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-6">
         <div className="flex items-center justify-between h-14 gap-3">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-2.5 cursor-pointer select-none" onClick={() => setActiveTab('overview')}>
-            <div className="w-7 h-7 bg-[#1A1A1A] border border-[#333333] rounded flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-[#00FF00] shadow-[0_0_8px_#00FF00]" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-xs tracking-[0.2em] text-[#00FF00] uppercase">
-                  CODEM TRADING LAB
-                </span>
-                <span className="px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-[#111] text-[#888] border border-[#333]">
-                  V2.4
-                </span>
-              </div>
-              <p className="text-[9px] text-[#666666] font-mono tracking-wider uppercase hidden sm:block">
-                QUANT RESEARCH • BACKTEST • DISPATCH
-              </p>
-            </div>
+          <div
+            className="flex items-center gap-2.5 cursor-pointer select-none"
+            onClick={() => setActiveTab('overview')}
+          >
+            <CodemLogo size="sm" variant="full" />
+            <span className="hidden lg:inline-block px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-[#1A1612] text-[#FF6A00] border border-[#FF6A00]/30">
+              V2.4 QUANT
+            </span>
           </div>
 
           {/* Quick Metrics Ticker (High Density) */}
@@ -117,6 +115,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Top Action Buttons */}
           <div className="flex items-center gap-2">
+            <SyncStatusBadge
+              isSyncing={isSyncing}
+              isOnline={navigator.onLine}
+              onOpenAuth={onOpenAuth}
+            />
+
             <button
               onClick={onOpenNewExperiment}
               className="px-3 py-1.5 bg-[#00FF00] hover:bg-[#00CC00] text-black font-bold text-xs rounded uppercase tracking-wider flex items-center gap-1.5 transition-colors shadow-[0_0_10px_rgba(0,255,0,0.2)]"

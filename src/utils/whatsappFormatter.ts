@@ -18,6 +18,18 @@ export function getVerdictEmoji(verdict: string): string {
   }
 }
 
+export function getAppBaseUrl(): string {
+  if (typeof window !== 'undefined' && window.location) {
+    const host = window.location.hostname;
+    // If running on local or dev/pre cloud run, construct public URL
+    if (host.includes('codemlab.online')) {
+      return 'https://codemlab.online';
+    }
+    return window.location.origin;
+  }
+  return 'https://codemlab.online';
+}
+
 export function formatWhatsAppReport(
   experiment: Experiment,
   templateId: WhatsAppTemplateId = 'standard_summary',
@@ -28,6 +40,8 @@ export function formatWhatsAppReport(
   const verdictText = getVerdictEmoji(experiment.verdict);
   const netSign = stats.netR >= 0 ? '+' : '';
   const expSign = stats.expectancy >= 0 ? '+' : '';
+  const baseUrl = getAppBaseUrl();
+  const directLink = `${baseUrl}/?exp=${encodeURIComponent(experiment.id)}`;
 
   const dateStr = new Date(experiment.createdAt || Date.now()).toLocaleDateString('en-GB', {
     day: '2-digit',
@@ -56,7 +70,7 @@ ${experiment.verdictNotes ? `📝 *Notes:* ${experiment.verdictNotes}\n` : ''}${
 ${verdictText}
 ━━━━━━━━━━━━━━━━━━━━━
 📅 _Date: ${dateStr}_
-${includeLink ? `\n📊 _View Codem Trading Lab Master Record:_\nhttps://codemtrading.com/lab/${experiment.id.toLowerCase()}` : ''}
+${includeLink ? `\n📊 *Live Interactive Study & Trade Log:*\n${directLink}\n` : ''}
 🚀 *CODEM TRADING LAB* — _Backtest • Document • Execute_`;
   }
 
@@ -91,6 +105,7 @@ ${experiment.keyFinding}
 ${verdictText}
 
 ${customNote ? `\n💬 *Lead Trader Note:* ${customNote}` : ''}
+${includeLink ? `\n🔗 *Full Interactive Study:*\n${directLink}` : ''}
 ━━━━━━━━━━━━━━━━━━━━━
 CODEM TRADING RESEARCH • ${dateStr}`;
   }
@@ -112,6 +127,7 @@ CODEM TRADING RESEARCH • ${dateStr}`;
 "${experiment.keyFinding}"
 
 ${verdictText}
+${includeLink ? `\n🔗 *Verify Stats:* ${directLink}` : ''}
 ━━━━━━━━━━━━━━━━━━━━━
 CODEM TRADING LAB`;
   }
@@ -125,6 +141,7 @@ CODEM TRADING LAB`;
 
 *Core Takeaway:*
 ${experiment.keyFinding}
+${includeLink ? `\n🔗 *Interactive Report:* ${directLink}` : ''}
 
 CODEM TRADING LAB`;
 }

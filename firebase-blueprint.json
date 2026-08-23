@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "entities": {
+    "UserProfile": {
+      "collectionName": "users",
+      "fields": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "Experiment": {
+      "collectionName": "experiments",
+      "fields": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "type": { "type": "string" },
+        "pair": { "type": "string" },
+        "timeframe": { "type": "string" },
+        "session": { "type": "string" },
+        "setupModel": { "type": "string" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "sampleSize": { "type": "number" },
+        "trades": { "type": "array" },
+        "keyFinding": { "type": "string" },
+        "hypotheses": { "type": "string" },
+        "verdict": { "type": "string" },
+        "verdictNotes": { "type": "string" },
+        "screenshotUrls": { "type": "array" },
+        "tags": { "type": "array" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "publishedToWhatsApp": { "type": "boolean" },
+        "publishedAt": { "type": "string" }
+      }
+    },
+    "UserSettings": {
+      "collectionName": "user_settings",
+      "fields": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "whatsappGroups": { "type": "array" },
+        "updatedAt": { "type": "string" }
+      }
+    }
+  }
+}

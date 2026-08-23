@@ -35,7 +35,7 @@ export const WhatsAppShareModal: React.FC<WhatsAppShareModalProps> = ({
   availableGroups,
 }) => {
   const [selectedTemplate, setSelectedTemplate] = useState<WhatsAppTemplateId>('standard_summary');
-  const [cardTheme, setCardTheme] = useState<'cyber_dark' | 'midnight_stealth' | 'emerald_terminal'>('cyber_dark');
+  const [cardTheme, setCardTheme] = useState<'codem_orange' | 'cyber_dark' | 'midnight_stealth' | 'emerald_terminal'>('codem_orange');
   const [customNote, setCustomNote] = useState('');
   const [includeLink, setIncludeLink] = useState(true);
   const [copiedText, setCopiedText] = useState(false);
@@ -203,11 +203,12 @@ export const WhatsAppShareModal: React.FC<WhatsAppShareModalProps> = ({
             {/* Step 2: Visual Card Theme */}
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-[#888] mb-1.5 flex items-center gap-1.5">
-                <Palette className="w-3 h-3 text-[#00FF00]" />
+                <Palette className="w-3 h-3 text-[#FF6A00]" />
                 2. Visual Card Theme
               </label>
-              <div className="grid grid-cols-3 gap-1.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                 {[
+                  { id: 'codem_orange', label: '🔥 Codem Orange' },
                   { id: 'cyber_dark', label: 'Terminal Dark' },
                   { id: 'emerald_terminal', label: 'Neon Green' },
                   { id: 'midnight_stealth', label: 'Monochrome' },
@@ -215,9 +216,9 @@ export const WhatsAppShareModal: React.FC<WhatsAppShareModalProps> = ({
                   <button
                     key={theme.id}
                     onClick={() => setCardTheme(theme.id as any)}
-                    className={`px-2 py-1.5 rounded text-[10px] font-medium border text-center transition-all ${
+                    className={`px-1.5 py-1.5 rounded text-[10px] font-medium border text-center transition-all ${
                       cardTheme === theme.id
-                        ? 'bg-[#1A1A1A] border-[#00FF00] text-[#00FF00] font-bold'
+                        ? 'bg-[#1A1A1A] border-[#FF6A00] text-[#FF6A00] font-bold shadow-[0_0_8px_rgba(255,106,0,0.2)]'
                         : 'bg-[#141414] border-[#222222] text-[#777] hover:bg-[#1A1A1A]'
                     }`}
                   >
