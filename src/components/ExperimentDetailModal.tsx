@@ -99,35 +99,35 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-sm overflow-y-auto font-sans">
-      <div className="relative w-full max-w-5xl bg-[#111111] border border-[#2A2A2A] rounded shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto font-sans">
+      <div className="relative w-full max-w-5xl bg-[#12131D] border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-[#222222] bg-[#161616] flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="px-2 py-0.5 rounded bg-[#1A1A1A] text-[#00FF00] font-mono font-bold text-xs border border-[#333]">
+        <div className="px-6 py-5 border-b border-slate-800 bg-[#161826] flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div className="px-3 py-1 rounded-xl bg-[#1E2235] text-[#00FF66] font-mono font-extrabold text-sm border border-slate-700">
               {experiment.id}
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xs sm:text-sm font-bold text-white tracking-tight uppercase font-mono">
+              <div className="flex items-center gap-2.5">
+                <h2 className="text-base sm:text-lg font-extrabold text-white tracking-tight">
                   {experiment.title || experiment.setupModel}
                 </h2>
                 <span
-                  className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded border ${
+                  className={`text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-lg border ${
                     experiment.verdict === 'KEEP'
-                      ? 'bg-[#002200] text-[#00FF00] border-[#006600]'
+                      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
                       : experiment.verdict === 'KEEP_TESTING'
-                      ? 'bg-[#221A00] text-[#FFCC00] border-[#664400]'
+                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
                       : experiment.verdict === 'DISCARD'
-                      ? 'bg-[#220000] text-[#FF3333] border-[#660000]'
-                      : 'bg-[#111] text-[#AAA] border-[#333]'
+                      ? 'bg-rose-500/15 text-rose-400 border-rose-500/40'
+                      : 'bg-slate-800 text-slate-300 border-slate-700'
                   }`}
                 >
                   {experiment.verdict.replace('_', ' ')}
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-[10px] text-[#666] font-mono mt-0.5">
-                <span className="text-[#00FF00] font-bold">{experiment.pair}</span>
+              <div className="flex items-center gap-2 text-xs text-slate-400 font-mono font-semibold mt-1">
+                <span className="text-[#00FF66] font-bold">{experiment.pair}</span>
                 <span>•</span>
                 <span>{experiment.timeframe}</span>
                 <span>•</span>
@@ -138,25 +138,25 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => onOpenWhatsAppShare(experiment)}
-              className="px-3 py-1.5 rounded bg-[#00FF00] hover:bg-[#00CC00] text-black font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_10px_rgba(0,255,0,0.2)] transition-colors"
+              className="px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-black font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(37,211,102,0.3)] transition-all"
             >
-              <Share2 className="w-3.5 h-3.5 stroke-[3]" />
+              <Share2 className="w-4 h-4 stroke-[3]" />
               <span>WhatsApp</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1 text-[#666] hover:text-white rounded hover:bg-[#222] transition-colors"
+              className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="px-4 border-b border-[#222222] bg-[#141414] flex items-center gap-1 overflow-x-auto font-mono">
+        <div className="px-6 border-b border-slate-800 bg-[#141522] flex items-center gap-2 overflow-x-auto font-mono">
           {[
             { id: 'overview', label: '📊 Statistics & Equity' },
             { id: 'trades', label: `📋 Trade Log (${experiment.trades.length})` },
@@ -166,10 +166,10 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`py-2 px-3 text-[11px] font-semibold border-b-2 whitespace-nowrap transition-colors ${
+              className={`py-3 px-4 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap transition-colors ${
                 activeTab === tab.id
-                  ? 'border-[#00FF00] text-[#00FF00]'
-                  : 'border-transparent text-[#666] hover:text-[#CCC]'
+                  ? 'border-[#00FF66] text-[#00FF66]'
+                  : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
               {tab.label}
@@ -178,78 +178,79 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-4 font-mono text-xs">
+        <div className="flex-1 p-6 overflow-y-auto space-y-6 font-mono text-xs sm:text-sm">
           {/* TAB 1: OVERVIEW & EQUITY CURVE */}
           {activeTab === 'overview' && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Top Performance Metric Cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-                <div className="p-2.5 rounded bg-[#161616] border border-[#222222]">
-                  <span className="text-[9px] uppercase tracking-wider text-[#666]">Total Trades</span>
-                  <div className="text-base font-bold text-white mt-0.5">{stats.totalTrades}</div>
-                  <span className="text-[9px] text-[#555]">Sample count</span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="p-4 rounded-2xl bg-[#181B28] border border-slate-800">
+                  <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">Total Trades</span>
+                  <div className="text-2xl font-extrabold text-white mt-1">{stats.totalTrades}</div>
+                  <span className="text-xs text-slate-400 mt-0.5 block">Sample count</span>
                 </div>
-                <div className="p-2.5 rounded bg-[#161616] border border-[#222222]">
-                  <span className="text-[9px] uppercase tracking-wider text-[#666]">Win Rate</span>
-                  <div className="text-base font-bold text-[#00FF00] mt-0.5">{stats.winRate}%</div>
-                  <span className="text-[9px] text-[#555]">{stats.wins}W / {stats.losses}L</span>
+                <div className="p-4 rounded-2xl bg-[#181B28] border border-slate-800">
+                  <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">Win Rate</span>
+                  <div className="text-2xl font-extrabold text-[#00FF66] mt-1">{stats.winRate}%</div>
+                  <span className="text-xs text-slate-400 mt-0.5 block">{stats.wins}W / {stats.losses}L</span>
                 </div>
-                <div className="p-2.5 rounded bg-[#161616] border border-[#222222]">
-                  <span className="text-[9px] uppercase tracking-wider text-[#666]">Net Return</span>
-                  <div className={`text-base font-bold mt-0.5 ${stats.netR >= 0 ? 'text-[#00FF00]' : 'text-[#FF3333]'}`}>
+                <div className="p-4 rounded-2xl bg-[#181B28] border border-slate-800">
+                  <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">Net Return</span>
+                  <div className={`text-2xl font-extrabold mt-1 ${stats.netR >= 0 ? 'text-[#FF8C00]' : 'text-rose-400'}`}>
                     {netSign}{stats.netR}R
                   </div>
-                  <span className="text-[9px] text-[#555]">R-Multiple</span>
+                  <span className="text-xs text-slate-400 mt-0.5 block">R-Multiple</span>
                 </div>
-                <div className="p-2.5 rounded bg-[#161616] border border-[#222222]">
-                  <span className="text-[9px] uppercase tracking-wider text-[#666]">Expectancy</span>
-                  <div className="text-base font-bold text-[#00FF00] mt-0.5">{expSign}{stats.expectancy}R</div>
-                  <span className="text-[9px] text-[#555]">/ trade</span>
+                <div className="p-4 rounded-2xl bg-[#181B28] border border-slate-800">
+                  <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">Expectancy</span>
+                  <div className="text-2xl font-extrabold text-[#00FF66] mt-1">{expSign}{stats.expectancy}R</div>
+                  <span className="text-xs text-slate-400 mt-0.5 block">/ trade</span>
                 </div>
-                <div className="p-2.5 rounded bg-[#161616] border border-[#222222]">
-                  <span className="text-[9px] uppercase tracking-wider text-[#666]">Profit Factor</span>
-                  <div className="text-base font-bold text-white mt-0.5">{stats.profitFactor}</div>
-                  <span className="text-[9px] text-[#555]">Avg: +{stats.avgWinRR}R</span>
+                <div className="p-4 rounded-2xl bg-[#181B28] border border-slate-800">
+                  <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">Profit Factor</span>
+                  <div className="text-2xl font-extrabold text-white mt-1">{stats.profitFactor}</div>
+                  <span className="text-xs text-slate-400 mt-0.5 block">Avg: +{stats.avgWinRR}R</span>
                 </div>
-                <div className="p-2.5 rounded bg-[#161616] border border-[#222222]">
-                  <span className="text-[9px] uppercase tracking-wider text-[#666]">Loss Streak</span>
-                  <div className="text-base font-bold text-[#FF3333] mt-0.5">{stats.maxConsecutiveLosses}</div>
-                  <span className="text-[9px] text-[#FF3333]/70">DD: -{stats.maxDrawdownR}R</span>
+                <div className="p-4 rounded-2xl bg-[#181B28] border border-slate-800">
+                  <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">Loss Streak</span>
+                  <div className="text-2xl font-extrabold text-rose-400 mt-1">{stats.maxConsecutiveLosses}</div>
+                  <span className="text-xs text-rose-400/80 mt-0.5 block">DD: -{stats.maxDrawdownR}R</span>
                 </div>
               </div>
 
               {/* Interactive Equity Curve */}
-              <div className="p-3.5 rounded bg-[#0E0E0E] border border-[#222222]">
-                <div className="flex items-center justify-between mb-2.5 text-[10px]">
-                  <div className="flex items-center gap-1.5">
-                    <TrendingUp className="w-3.5 h-3.5 text-[#00FF00]" />
-                    <h3 className="font-bold text-[#888] uppercase tracking-wider">Cumulative R-Multiple Curve</h3>
+              <div className="p-5 rounded-2xl bg-[#0B0C12] border border-slate-800">
+                <div className="flex items-center justify-between mb-4 text-xs sm:text-sm">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-[#00FF66]" />
+                    <h3 className="font-extrabold text-white uppercase tracking-wider">Cumulative R-Multiple Curve</h3>
                   </div>
-                  <div className="text-[#00FF00] font-semibold">
+                  <div className="text-[#00FF66] font-bold">
                     Net: {netSign}{stats.netR}R | Peak DD: -{stats.maxDrawdownR}R
                   </div>
                 </div>
 
-                <div className="h-56 w-full">
+                <div className="h-64 w-full">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={stats.equityCurve} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <AreaChart data={stats.equityCurve} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                       <defs>
                         <linearGradient id="eqGradientModal" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#00FF00" stopOpacity={0.25} />
-                          <stop offset="95%" stopColor="#00FF00" stopOpacity={0.0} />
+                          <stop offset="5%" stopColor="#00FF66" stopOpacity={0.25} />
+                          <stop offset="95%" stopColor="#00FF66" stopOpacity={0.0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="2 2" stroke="#1A1A1A" />
-                      <XAxis dataKey="tradeNum" stroke="#444" tick={{ fontSize: 10, fill: '#777' }} />
-                      <YAxis stroke="#444" tick={{ fontSize: 10, fill: '#777' }} unit="R" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1E2235" />
+                      <XAxis dataKey="tradeNum" stroke="#64748B" tick={{ fontSize: 12, fill: '#94A3B8' }} />
+                      <YAxis stroke="#64748B" tick={{ fontSize: 12, fill: '#94A3B8' }} unit="R" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#0A0A0A',
-                          borderColor: '#333333',
-                          borderRadius: '4px',
-                          color: '#E0E0E0',
-                          fontSize: '11px',
+                          backgroundColor: '#0F111A',
+                          borderColor: '#334155',
+                          borderRadius: '8px',
+                          color: '#F8FAFC',
+                          fontSize: '13px',
                           fontFamily: 'monospace',
+                          fontWeight: 'bold',
                         }}
                         formatter={(val: any) => [`${val >= 0 ? '+' : ''}${val}R`, 'Cumulative R']}
                         labelFormatter={(label) => `Trade #${label}`}
@@ -257,8 +258,8 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
                       <Area
                         type="monotone"
                         dataKey="cumulativeR"
-                        stroke="#00FF00"
-                        strokeWidth={2}
+                        stroke="#00FF66"
+                        strokeWidth={2.5}
                         fillOpacity={1}
                         fill="url(#eqGradientModal)"
                       />
@@ -268,21 +269,21 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
               </div>
 
               {/* Research Summary Quick Card */}
-              <div className="p-3 rounded bg-[#161616] border border-[#2A2A2A] flex items-start justify-between gap-3">
+              <div className="p-5 rounded-2xl bg-[#181B28] border border-slate-700/80 flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-[10px] font-bold text-[#00FF00] uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                    <Zap className="w-3 h-3 text-[#00FF00]" />
+                  <div className="text-xs font-extrabold text-[#00FF66] uppercase tracking-wider mb-1.5 flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-[#00FF66]" />
                     Key Research Conclusion
                   </div>
-                  <p className="text-[11px] text-[#CCC] leading-relaxed font-sans">
+                  <p className="text-sm text-slate-200 leading-relaxed font-sans font-medium">
                     {experiment.keyFinding}
                   </p>
                 </div>
                 <button
                   onClick={() => onOpenWhatsAppShare(experiment)}
-                  className="shrink-0 px-2.5 py-1.5 rounded bg-[#1A1A1A] hover:bg-[#222] text-[#00FF00] font-bold text-xs flex items-center gap-1 border border-[#333] transition-colors"
+                  className="shrink-0 px-4 py-2 rounded-xl bg-[#1E2235] hover:bg-[#282E47] text-[#00FF66] font-bold text-xs sm:text-sm flex items-center gap-2 border border-slate-700 transition-colors"
                 >
-                  <Share2 className="w-3 h-3" />
+                  <Share2 className="w-4 h-4" />
                   <span>Share</span>
                 </button>
               </div>
@@ -291,89 +292,72 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
 
           {/* TAB 2: TRADE LOG */}
           {activeTab === 'trades' && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-1 p-0.5 rounded bg-[#161616] border border-[#222222]">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#181B28] border border-slate-800">
                   {(['ALL', 'WIN', 'LOSS', 'BE'] as const).map((filter) => (
                     <button
                       key={filter}
                       onClick={() => setTradeFilter(filter)}
-                      className={`px-2.5 py-1 rounded text-[10px] font-medium transition-all ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition-colors ${
                         tradeFilter === filter
-                          ? 'bg-[#1F1F1F] text-[#00FF00]'
-                          : 'text-[#666] hover:text-[#CCC]'
+                          ? 'bg-[#1E2235] text-[#00FF66] border border-[#00FF66]/40'
+                          : 'text-slate-400 hover:text-white'
                       }`}
                     >
-                      {filter} {filter === 'ALL' ? `(${experiment.trades.length})` : ''}
+                      {filter}
                     </button>
                   ))}
                 </div>
-                <div className="text-[10px] text-[#666]">
+                <span className="text-xs text-slate-400 font-mono font-semibold">
                   Showing {filteredTrades.length} of {experiment.trades.length} trades
-                </div>
+                </span>
               </div>
 
-              <div className="overflow-x-auto rounded border border-[#222222] bg-[#0A0A0A]">
-                <table className="w-full text-left text-[11px] font-mono border-collapse">
-                  <thead className="bg-[#181818] text-[#666] uppercase text-[10px] border-b border-[#222222]">
+              <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-[#0B0C12]">
+                <table className="w-full text-left text-xs sm:text-sm border-collapse font-mono">
+                  <thead className="bg-[#181B28] text-slate-400 uppercase text-xs border-b border-slate-800 font-bold">
                     <tr>
-                      <th className="px-3 py-2">#</th>
-                      <th className="px-3 py-2">Date</th>
-                      <th className="px-3 py-2">Session</th>
-                      <th className="px-3 py-2">Direction</th>
-                      <th className="px-3 py-2">Realized R</th>
-                      <th className="px-3 py-2">Result</th>
-                      <th className="px-3 py-2">Notes & Execution</th>
+                      <th className="px-4 py-3">#</th>
+                      <th className="px-4 py-3">Direction</th>
+                      <th className="px-4 py-3">Session</th>
+                      <th className="px-4 py-3">Planned RR</th>
+                      <th className="px-4 py-3">Realized R</th>
+                      <th className="px-4 py-3">Result</th>
+                      <th className="px-4 py-3">Notes</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#222222] text-[#CCC]">
-                    {filteredTrades.map((trade, idx) => (
-                      <tr key={trade.id || idx} className="hover:bg-[#151515] transition-colors">
-                        <td className="px-3 py-2 text-[#666] font-bold">{trade.tradeNumber || idx + 1}</td>
-                        <td className="px-3 py-2 text-[#888]">{trade.date}</td>
-                        <td className="px-3 py-2 text-white">{trade.session}</td>
-                        <td className="px-3 py-2">
+                  <tbody className="divide-y divide-slate-800 text-slate-200">
+                    {filteredTrades.map((t, idx) => (
+                      <tr key={t.id || idx} className="hover:bg-[#181B28]/60 transition-colors">
+                        <td className="px-4 py-3 font-bold text-slate-400">#{t.tradeNumber || idx + 1}</td>
+                        <td className="px-4 py-3 font-extrabold">
+                          <span className={t.direction === 'Buy' ? 'text-[#00FF66]' : 'text-rose-400'}>
+                            {t.direction.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-slate-300">{t.session}</td>
+                        <td className="px-4 py-3 text-slate-300 font-semibold">{t.plannedRR}R</td>
+                        <td className="px-4 py-3 font-extrabold">
+                          <span className={t.realizedRR > 0 ? 'text-[#00FF66]' : t.realizedRR < 0 ? 'text-rose-400' : 'text-slate-400'}>
+                            {t.realizedRR > 0 ? `+${t.realizedRR}` : t.realizedRR}R
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
                           <span
-                            className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
-                              trade.direction === 'Long'
-                                ? 'bg-[#002200] text-[#00FF00] border border-[#006600]'
-                                : 'bg-[#220000] text-[#FF3333] border border-[#660000]'
+                            className={`px-2.5 py-0.5 rounded-lg text-xs font-bold ${
+                              t.result === 'Win'
+                                ? 'bg-[#00FF66]/20 text-[#00FF66] border border-[#00FF66]/40'
+                                : t.result === 'Loss'
+                                ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
+                                : 'bg-slate-700/40 text-slate-300'
                             }`}
                           >
-                            {trade.direction.toUpperCase()}
+                            {t.result.toUpperCase()}
                           </span>
                         </td>
-                        <td className="px-3 py-2 font-bold">
-                          <span
-                            className={
-                              trade.realizedRR > 0
-                                ? 'text-[#00FF00]'
-                                : trade.realizedRR < 0
-                                ? 'text-[#FF3333]'
-                                : 'text-[#888]'
-                            }
-                          >
-                            {trade.realizedRR > 0 ? '+' : ''}
-                            {trade.realizedRR}R
-                          </span>
-                        </td>
-                        <td className="px-3 py-2">
-                          {trade.result === 'Win' ? (
-                            <span className="flex items-center gap-1 text-[#00FF00] font-semibold">
-                              <CheckCircle2 className="w-3 h-3" /> WIN
-                            </span>
-                          ) : trade.result === 'Loss' ? (
-                            <span className="flex items-center gap-1 text-[#FF3333] font-semibold">
-                              <XCircle className="w-3 h-3" /> LOSS
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-1 text-[#888] font-semibold">
-                              <MinusCircle className="w-3 h-3" /> BE
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-3 py-2 text-[#888] max-w-xs truncate font-sans text-xs">
-                          {trade.notes || 'Clean rule execution.'}
+                        <td className="px-4 py-3 text-slate-300 font-sans text-xs max-w-xs truncate">
+                          {t.notes || '—'}
                         </td>
                       </tr>
                     ))}
@@ -385,166 +369,148 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
 
           {/* TAB 3: FINDINGS & VERDICT */}
           {activeTab === 'findings' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold text-[#888] uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#00FF00]" />
-                  Research Findings & Rule Invalidation
-                </h3>
-                {!isEditingFinding ? (
-                  <button
-                    onClick={() => setIsEditingFinding(true)}
-                    className="px-2.5 py-1 rounded bg-[#161616] hover:bg-[#222] text-xs font-semibold text-[#CCC] border border-[#333] flex items-center gap-1.5"
-                  >
-                    <Edit3 className="w-3 h-3 text-[#00FF00]" />
-                    <span>Edit Findings</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleSaveFindings}
-                    className="px-3 py-1 rounded bg-[#00FF00] hover:bg-[#00CC00] text-black text-xs font-bold flex items-center gap-1 shadow"
-                  >
-                    <Save className="w-3 h-3 stroke-[3]" />
-                    <span>Save Changes</span>
-                  </button>
-                )}
-              </div>
-
-              {/* Key Finding Box */}
-              <div className="p-3.5 rounded bg-[#161616] border border-[#222222] space-y-1.5">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#666]">
-                  Key Statistical Finding
-                </label>
-                {isEditingFinding ? (
-                  <textarea
-                    rows={3}
-                    value={editedFinding}
-                    onChange={(e) => setEditedFinding(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#111111] border border-[#333] text-xs text-white focus:outline-none focus:border-[#00FF00]"
-                  />
-                ) : (
-                  <p className="text-xs text-[#CCC] leading-relaxed font-sans">
-                    {experiment.keyFinding}
-                  </p>
-                )}
-              </div>
-
-              {/* Hypotheses Box */}
-              <div className="p-3.5 rounded bg-[#161616] border border-[#222222] space-y-1.5">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#666]">
-                  Underlying Market Mechanics Hypothesis
-                </label>
-                {isEditingFinding ? (
-                  <textarea
-                    rows={2}
-                    value={editedHypothesis}
-                    onChange={(e) => setEditedHypothesis(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#111111] border border-[#333] text-xs text-white focus:outline-none focus:border-[#00FF00]"
-                  />
-                ) : (
-                  <p className="text-xs text-[#AAA] leading-relaxed font-sans">
-                    {experiment.hypotheses || 'No hypothesis logged yet.'}
-                  </p>
-                )}
-              </div>
-
-              {/* Verdict Selector */}
-              <div className="p-3.5 rounded bg-[#161616] border border-[#222222] space-y-2">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#666]">
-                  Strategy Verdict (Codem Trading Decision)
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {[
-                    { id: 'KEEP', label: '🟢 KEEP (Edge)', desc: 'Live playbook' },
-                    { id: 'KEEP_TESTING', label: '🟡 KEEP TESTING', desc: 'Expand sample' },
-                    { id: 'DISCARD', label: '🔴 DISCARD', desc: 'Negative EV' },
-                    { id: 'MODIFY_PARAMS', label: '🔄 MODIFY PARAMS', desc: 'Adjust SL/TP' },
-                  ].map((v) => (
+            <div className="space-y-5">
+              <div className="p-5 rounded-2xl bg-[#181B28] border border-slate-800 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#00FF66]" />
+                    <span>Hypothesis & Quantitative Key Takeaways</span>
+                  </h3>
+                  {!isEditingFinding ? (
                     <button
-                      key={v.id}
-                      onClick={() => {
-                        setSelectedVerdict(v.id as VerdictType);
-                        if (!isEditingFinding) {
-                          const updated: Experiment = {
-                            ...experiment,
-                            verdict: v.id as VerdictType,
-                            updatedAt: new Date().toISOString(),
-                          };
-                          onUpdate(updated);
-                        }
-                      }}
-                      className={`p-2.5 rounded text-left border transition-all ${
-                        selectedVerdict === v.id
-                          ? 'bg-[#1A1A1A] border-[#00FF00] text-[#00FF00] shadow-[0_0_8px_rgba(0,255,0,0.15)]'
-                          : 'bg-[#141414] border-[#222222] text-[#777] hover:bg-[#1A1A1A]'
-                      }`}
+                      onClick={() => setIsEditingFinding(true)}
+                      className="px-3.5 py-1.5 rounded-xl bg-[#1E2235] hover:bg-[#282E47] text-white text-xs font-bold flex items-center gap-1.5 border border-slate-700 transition-colors"
                     >
-                      <div className="text-[11px] font-bold text-white">{v.label}</div>
-                      <div className="text-[9px] text-[#666] mt-0.5">{v.desc}</div>
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>Edit Findings</span>
                     </button>
-                  ))}
+                  ) : (
+                    <button
+                      onClick={handleSaveFindings}
+                      className="px-4 py-1.5 rounded-xl bg-[#00FF66] hover:bg-[#00E05A] text-black text-xs font-extrabold flex items-center gap-1.5 transition-colors"
+                    >
+                      <Save className="w-3.5 h-3.5" />
+                      <span>Save Changes</span>
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Core Hypothesis
+                    </label>
+                    {isEditingFinding ? (
+                      <textarea
+                        rows={3}
+                        value={editedHypothesis}
+                        onChange={(e) => setEditedHypothesis(e.target.value)}
+                        className="w-full p-3 rounded-xl bg-[#12131D] border border-slate-700 text-sm text-white font-sans focus:outline-none focus:border-[#00FF66]"
+                      />
+                    ) : (
+                      <p className="p-3.5 rounded-xl bg-[#12131D] border border-slate-800 text-sm text-slate-200 leading-relaxed font-sans">
+                        {experiment.hypotheses || 'No initial hypothesis specified.'}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Key Finding & Conclusion
+                    </label>
+                    {isEditingFinding ? (
+                      <textarea
+                        rows={4}
+                        value={editedFinding}
+                        onChange={(e) => setEditedFinding(e.target.value)}
+                        className="w-full p-3 rounded-xl bg-[#12131D] border border-slate-700 text-sm text-white font-sans focus:outline-none focus:border-[#00FF66]"
+                      />
+                    ) : (
+                      <p className="p-3.5 rounded-xl bg-[#12131D] border border-slate-800 text-sm text-slate-200 leading-relaxed font-sans font-medium">
+                        {experiment.keyFinding}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Research Verdict
+                    </label>
+                    {isEditingFinding ? (
+                      <select
+                        value={selectedVerdict}
+                        onChange={(e) => setSelectedVerdict(e.target.value as VerdictType)}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#12131D] border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-[#00FF66]"
+                      >
+                        <option value="KEEP">KEEP (Proven Positive EV Edge)</option>
+                        <option value="KEEP_TESTING">KEEP TESTING (Need More Data)</option>
+                        <option value="DISCARD">DISCARD (Negative Edge)</option>
+                        <option value="MODIFY_PARAMS">MODIFY PARAMS</option>
+                      </select>
+                    ) : (
+                      <div className="p-3.5 rounded-xl bg-[#12131D] border border-slate-800 flex items-center gap-3">
+                        <span
+                          className={`text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-lg border ${
+                            experiment.verdict === 'KEEP'
+                              ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
+                              : experiment.verdict === 'KEEP_TESTING'
+                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                              : 'bg-rose-500/15 text-rose-400 border-rose-500/40'
+                          }`}
+                        >
+                          {experiment.verdict.replace('_', ' ')}
+                        </span>
+                        <span className="text-xs text-slate-300 font-sans">
+                          {experiment.verdictNotes || 'Standard statistical evaluation threshold met.'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* TAB 4: SCREENSHOTS GALLERY */}
+          {/* TAB 4: SCREENSHOTS */}
           {activeTab === 'screenshots' && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-2 flex-wrap">
-                <div className="flex items-center gap-2 flex-1 max-w-md">
-                  <input
-                    type="url"
-                    placeholder="Paste TradingView chart image URL..."
-                    value={newScreenshotUrl}
-                    onChange={(e) => setNewScreenshotUrl(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] text-xs text-white focus:outline-none focus:border-[#00FF00]"
-                  />
-                  <button
-                    onClick={handleAddScreenshot}
-                    className="px-2.5 py-1.5 rounded bg-[#1A1A1A] hover:bg-[#222] text-[#00FF00] font-bold text-xs flex items-center gap-1 border border-[#333] shrink-0"
-                  >
-                    <Plus className="w-3 h-3" />
-                    <span>Add Chart</span>
-                  </button>
-                </div>
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-[#181B28] border border-slate-800 flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Paste Image URL (TradingView or chart capture)..."
+                  value={newScreenshotUrl}
+                  onChange={(e) => setNewScreenshotUrl(e.target.value)}
+                  className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#12131D] border border-slate-700 text-sm text-white font-sans focus:outline-none focus:border-[#00FF66]"
+                />
+                <button
+                  onClick={handleAddScreenshot}
+                  className="px-4 py-2.5 rounded-xl bg-[#00FF66] hover:bg-[#00E05A] text-black font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4 stroke-[3]" />
+                  <span>Add</span>
+                </button>
               </div>
 
               {experiment.screenshotUrls.length === 0 ? (
-                <div className="p-8 text-center border border-dashed border-[#222] rounded bg-[#0A0A0A]">
-                  <ImageIcon className="w-8 h-8 text-[#444] mx-auto mb-1.5" />
-                  <p className="text-xs text-[#666]">No chart screenshots added for this experiment yet.</p>
+                <div className="p-8 rounded-2xl bg-[#0B0C12] border border-slate-800 text-center text-slate-400 text-xs font-mono">
+                  No screenshots attached to this experiment.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {experiment.screenshotUrls.map((url, idx) => (
-                    <div
-                      key={idx}
-                      className="group relative rounded overflow-hidden border border-[#222222] bg-[#0A0A0A] aspect-video"
-                    >
+                    <div key={idx} className="relative group rounded-2xl overflow-hidden border border-slate-800 bg-[#0B0C12]">
                       <img
                         src={url}
-                        alt={`Chart #${idx + 1}`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                        alt={`Screenshot ${idx + 1}`}
+                        className="w-full h-40 object-cover cursor-pointer hover:opacity-80 transition-opacity"
                         onClick={() => setZoomedImage(url)}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-between p-2">
-                        <span className="text-[10px] font-mono text-white">Chart #{idx + 1}</span>
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => setZoomedImage(url)}
-                            className="px-2 py-0.5 rounded bg-black/70 text-[10px] text-white hover:bg-black"
-                          >
-                            Zoom
-                          </button>
-                          <button
-                            onClick={() => handleRemoveScreenshot(idx)}
-                            className="p-1 rounded bg-[#FF3333]/80 text-white hover:bg-[#FF3333]"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </div>
-                      </div>
+                      <button
+                        onClick={() => handleRemoveScreenshot(idx)}
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/70 text-rose-400 hover:text-white hover:bg-rose-600 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -554,21 +520,13 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
         </div>
       </div>
 
-      {/* Image Zoom Modal */}
+      {/* Zoomed Image Modal */}
       {zoomedImage && (
         <div
-          className="fixed inset-0 z-60 bg-black/95 flex items-center justify-center p-4 cursor-pointer"
+          className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/90 cursor-pointer"
           onClick={() => setZoomedImage(null)}
         >
-          <div className="relative max-w-5xl max-h-[90vh]">
-            <img src={zoomedImage} alt="Zoomed chart" className="max-w-full max-h-[85vh] rounded object-contain border border-[#333]" />
-            <button
-              onClick={() => setZoomedImage(null)}
-              className="absolute top-2 right-2 p-1.5 bg-black text-white rounded hover:bg-[#222]"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
+          <img src={zoomedImage} alt="Zoomed chart" className="max-w-full max-h-[90vh] rounded-2xl shadow-2xl" />
         </div>
       )}
     </div>

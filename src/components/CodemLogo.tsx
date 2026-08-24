@@ -16,14 +16,14 @@ export const CodemLogo: React.FC<CodemLogoProps> = ({
   const getDimensions = () => {
     switch (size) {
       case 'sm':
-        return { iconSize: 24, fontSize: 'text-xs', subSize: 'text-[8px]', gap: 'gap-2' };
+        return { iconSize: 28, fontSize: 'text-base', subSize: 'text-[11px]', gap: 'gap-2.5' };
       case 'lg':
-        return { iconSize: 44, fontSize: 'text-lg', subSize: 'text-[10px]', gap: 'gap-3' };
+        return { iconSize: 48, fontSize: 'text-xl', subSize: 'text-xs', gap: 'gap-3.5' };
       case 'xl':
-        return { iconSize: 64, fontSize: 'text-2xl', subSize: 'text-xs', gap: 'gap-3.5' };
+        return { iconSize: 68, fontSize: 'text-2xl', subSize: 'text-sm', gap: 'gap-4' };
       case 'md':
       default:
-        return { iconSize: 32, fontSize: 'text-sm', subSize: 'text-[9px]', gap: 'gap-2.5' };
+        return { iconSize: 36, fontSize: 'text-lg', subSize: 'text-xs', gap: 'gap-3' };
     }
   };
 

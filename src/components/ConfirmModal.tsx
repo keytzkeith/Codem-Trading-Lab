@@ -25,65 +25,65 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   const getButtonStyles = () => {
     switch (confirmVariant) {
       case 'danger':
-        return 'bg-[#FF3333] hover:bg-[#E62E2E] text-white shadow-[0_0_12px_rgba(255,51,51,0.3)]';
+        return 'bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]';
       case 'warning':
-        return 'bg-[#FFCC00] hover:bg-[#E6B800] text-black font-bold shadow-[0_0_12px_rgba(255,204,0,0.3)]';
+        return 'bg-amber-500 hover:bg-amber-400 text-black font-extrabold shadow-[0_0_15px_rgba(251,191,36,0.4)]';
       case 'primary':
       default:
-        return 'bg-[#00FF00] hover:bg-[#00CC00] text-black font-bold shadow-[0_0_12px_rgba(0,255,0,0.3)]';
+        return 'bg-[#00FF66] hover:bg-[#00E05A] text-black font-extrabold shadow-[0_0_15px_rgba(0,255,102,0.4)]';
     }
   };
 
   const getIcon = () => {
     switch (confirmVariant) {
       case 'danger':
-        return <Trash2 className="w-5 h-5 text-[#FF3333]" />;
+        return <Trash2 className="w-5 h-5 text-rose-400" />;
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-[#FFCC00]" />;
+        return <AlertTriangle className="w-5 h-5 text-amber-400" />;
       case 'primary':
       default:
-        return <RotateCcw className="w-5 h-5 text-[#00FF00]" />;
+        return <RotateCcw className="w-5 h-5 text-[#00FF66]" />;
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in font-sans">
       <div
-        className="relative w-full max-w-md bg-[#111111] border border-[#2A2A2A] rounded shadow-2xl p-5 font-mono text-xs overflow-hidden"
+        className="relative w-full max-w-md bg-[#12131D] border border-slate-800 rounded-3xl shadow-2xl p-6 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start gap-3.5">
-          <div className="p-2.5 rounded bg-[#1A1A1A] border border-[#333333] shrink-0">
+        <div className="flex items-start gap-4">
+          <div className="p-3 rounded-2xl bg-[#1E2235] border border-slate-700 shrink-0">
             {getIcon()}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+            <h3 className="text-base font-extrabold text-white">
               {title}
             </h3>
-            <p className="mt-1.5 text-xs text-[#888888] font-sans leading-relaxed">
+            <p className="mt-1.5 text-xs sm:text-sm text-slate-300 font-sans leading-relaxed">
               {message}
             </p>
           </div>
           <button
             onClick={onCancel}
-            className="text-[#666] hover:text-white p-1 rounded hover:bg-[#222] transition-colors"
+            className="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="mt-6 flex items-center justify-end gap-2.5 pt-3 border-t border-[#222222]">
+        <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
           <button
             type="button"
             onClick={onCancel}
-            className="px-3.5 py-1.5 rounded text-xs font-semibold text-[#888] hover:text-white hover:bg-[#1A1A1A] transition-colors"
+            className="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-300 hover:text-white hover:bg-[#1E2235] transition-colors border border-slate-700"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className={`px-4 py-1.5 rounded text-xs uppercase tracking-wider font-bold transition-all flex items-center gap-1.5 ${getButtonStyles()}`}
+            className={`px-5 py-2 rounded-xl text-xs sm:text-sm uppercase tracking-wider font-extrabold transition-all flex items-center gap-2 ${getButtonStyles()}`}
           >
             <span>{confirmLabel}</span>
           </button>

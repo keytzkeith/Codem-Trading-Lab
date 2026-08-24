@@ -153,6 +153,22 @@ export const saveUserSettingsToFirestore = async (
   );
 };
 
+export const fetchUserSettingsFromFirestore = async (userId: string): Promise<string[] | null> => {
+  try {
+    const docRef = doc(db, SETTINGS_COLLECTION, userId);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (Array.isArray(data.whatsappGroups)) {
+        return data.whatsappGroups;
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching user settings:', err);
+  }
+  return null;
+};
+
 /**
  * Fetch a single experiment by ID (for direct WhatsApp deep-links)
  */

@@ -47,28 +47,31 @@ export const TradingAnalyticsView: React.FC<TradingAnalyticsViewProps> = ({
 
   if (experiments.length === 0) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
-          <div className="flex items-center gap-2 mb-0.5">
-            <div className="w-2 h-2 rounded-full bg-[#00FF00] shadow-[0_0_8px_#00FF00]" />
-            <h1 className="text-sm font-bold text-white uppercase tracking-[0.15em] font-mono">
-              Quant Analytics & Edge Distribution
-            </h1>
+          <div className="flex items-center gap-2.5 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono uppercase bg-[#00FF66]/10 text-[#00FF66] border border-[#00FF66]/30">
+              <span className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" />
+              Edge Analytics
+            </span>
           </div>
-          <p className="text-[11px] text-[#666]">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Quant Analytics & Edge Distribution
+          </h1>
+          <p className="text-sm text-slate-300 mt-1">
             Payoff asymmetry and statistical distributions across all recorded executions.
           </p>
         </div>
 
-        <div className="bg-[#111111] border border-[#222222] border-dashed p-10 rounded text-center space-y-3">
-          <div className="w-10 h-10 rounded bg-[#1A1A1A] border border-[#333] flex items-center justify-center mx-auto text-[#00FF00]">
-            <BarChart3 className="w-5 h-5" />
+        <div className="bg-[#12131D] border border-slate-800/80 border-dashed p-10 rounded-2xl text-center space-y-4 shadow-xl">
+          <div className="w-12 h-12 rounded-full bg-[#181B28] border border-slate-700 flex items-center justify-center mx-auto text-[#00FF66]">
+            <BarChart3 className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+            <h4 className="text-lg font-bold text-white uppercase tracking-wider">
               No Trade Executions to Analyze
             </h4>
-            <p className="text-xs text-[#777] max-w-md mx-auto mt-1">
+            <p className="text-sm text-slate-300 max-w-md mx-auto mt-1 leading-relaxed">
               Your database is clean. Log trade executions or import your MetaTrader history to visualize payoff distributions, expectancy curves, and setup leaderboards.
             </p>
           </div>
@@ -76,7 +79,7 @@ export const TradingAnalyticsView: React.FC<TradingAnalyticsViewProps> = ({
             {onOpenNewExperiment && (
               <button
                 onClick={onOpenNewExperiment}
-                className="px-4 py-2 bg-[#00FF00] hover:bg-[#00CC00] text-black text-xs font-bold rounded uppercase tracking-wider flex items-center gap-1.5 transition-colors shadow-[0_0_10px_rgba(0,255,0,0.2)]"
+                className="px-5 py-2.5 bg-[#00FF66] hover:bg-[#00E05A] text-black text-sm font-extrabold rounded-xl uppercase tracking-wider flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(0,255,102,0.25)]"
               >
                 <Plus className="w-4 h-4 stroke-[3]" />
                 <span>Create New Experiment</span>
@@ -85,9 +88,9 @@ export const TradingAnalyticsView: React.FC<TradingAnalyticsViewProps> = ({
             {onOpenMt5Import && (
               <button
                 onClick={onOpenMt5Import}
-                className="px-4 py-2 bg-[#1A1A1A] hover:bg-[#222] text-[#CCC] hover:text-white text-xs font-semibold rounded border border-[#333] flex items-center gap-1.5 transition-colors"
+                className="px-5 py-2.5 bg-[#171926] hover:bg-[#1E2132] text-slate-200 hover:text-white text-sm font-bold rounded-xl border border-slate-700 flex items-center gap-2 transition-colors"
               >
-                <FileSpreadsheet className="w-4 h-4 text-[#00FF00]" />
+                <FileSpreadsheet className="w-4 h-4 text-[#00FF66]" />
                 <span>Import MT5 / CSV</span>
               </button>
             )}
@@ -139,59 +142,65 @@ export const TradingAnalyticsView: React.FC<TradingAnalyticsViewProps> = ({
   }).sort((a, b) => b.netR - a.netR);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 mb-0.5">
-          <div className="w-2 h-2 rounded-full bg-[#00FF00] shadow-[0_0_8px_#00FF00]" />
-          <h1 className="text-sm font-bold text-white uppercase tracking-[0.15em] font-mono">
-            Quant Analytics & Edge Distribution
-          </h1>
+        <div className="flex items-center gap-2.5 mb-1">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00FF66]/10 text-[#00FF66] border border-[#00FF66]/30">
+            <span className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" />
+            Statistical Asymmetry Engine
+          </span>
+          <span className="text-xs font-semibold text-slate-400">
+            • {allTrades.length} Total Trade Executions
+          </span>
         </div>
-        <p className="text-[11px] text-[#666]">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Quant Analytics & Edge Distribution
+        </h1>
+        <p className="text-sm text-slate-300 mt-1">
           Statistical payoff distributions and strategy model leaderboards across {allTrades.length} tested trades.
         </p>
       </div>
 
       {/* R-Multiple Distribution Histogram */}
-      <div className="p-4 rounded bg-[#111111] border border-[#222222]">
-        <div className="flex items-center justify-between mb-3">
+      <div className="p-5 sm:p-6 rounded-2xl bg-[#12131D] border border-slate-800/80 shadow-xl">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-[#888] flex items-center gap-2">
-              <TrendingUp className="w-3.5 h-3.5 text-[#00FF00]" />
+            <h3 className="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-[#00FF66]" />
               R-Multiple Frequency Distribution ({allTrades.length} Samples)
             </h3>
-            <p className="text-[10px] text-[#555]">
+            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
               Asymmetry and payoff frequency across all completed executions
             </p>
           </div>
         </div>
 
-        <div className="h-52 w-full">
+        <div className="h-60 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={histogramData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="2 2" stroke="#1A1A1A" vertical={false} />
-              <XAxis dataKey="bucket" stroke="#444" tick={{ fontSize: 10, fill: '#777' }} />
-              <YAxis stroke="#444" tick={{ fontSize: 10, fill: '#777' }} />
+            <BarChart data={histogramData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1E2235" vertical={false} />
+              <XAxis dataKey="bucket" stroke="#64748B" tick={{ fontSize: 12, fill: '#94A3B8' }} />
+              <YAxis stroke="#64748B" tick={{ fontSize: 12, fill: '#94A3B8' }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#0A0A0A',
-                  borderColor: '#333333',
-                  borderRadius: '4px',
-                  color: '#E0E0E0',
-                  fontSize: '11px',
-                  fontFamily: 'monospace',
+                  backgroundColor: '#0F111A',
+                  borderColor: '#334155',
+                  borderRadius: '8px',
+                  color: '#F8FAFC',
+                  fontSize: '13px',
+                  fontWeight: 'bold',
                 }}
                 formatter={(val: any, name: string, item: any) => [
-                  `${val} trades (${item.payload.percentage}%)`,
+                  `${val} executions (${item.payload.percentage}%)`,
                   'Frequency',
                 ]}
               />
-              <Bar dataKey="count" radius={[2, 2, 0, 0]}>
+              <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                 {histogramData.map((entry, index) => {
-                  let color = '#00FF00';
-                  if (entry.bucket.includes('Breakeven')) color = '#555555';
-                  else if (entry.bucket.includes('-1.0R') || entry.bucket.includes('<-1.0R')) color = '#FF3333';
+                  let color = '#00FF66';
+                  if (entry.bucket.includes('Breakeven')) color = '#64748B';
+                  else if (entry.bucket.includes('-1.0R') || entry.bucket.includes('<-1.0R')) color = '#FF4D4D';
                   return <Cell key={`cell-${index}`} fill={color} />;
                 })}
               </Bar>
@@ -200,66 +209,66 @@ export const TradingAnalyticsView: React.FC<TradingAnalyticsViewProps> = ({
         </div>
       </div>
 
-      {/* Setup Model Performance Matrix Table (High Density) */}
-      <div className="p-4 rounded bg-[#111111] border border-[#222222] space-y-3">
+      {/* Setup Model Performance Matrix Table */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-[#12131D] border border-slate-800/80 space-y-4 shadow-xl">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-[#888] flex items-center gap-2">
-              <Zap className="w-3.5 h-3.5 text-[#00FF00]" />
+            <h3 className="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
+              <Zap className="w-5 h-5 text-[#00FF66]" />
               Strategy Model Performance Leaderboard
             </h3>
-            <p className="text-[10px] text-[#555]">
+            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
               Ranked by total net R accumulated across sample backtests
             </p>
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded border border-[#222222] bg-[#0A0A0A]">
-          <table className="w-full text-left text-[11px] font-mono border-collapse">
-            <thead className="bg-[#181818] text-[#666] uppercase text-[10px] border-b border-[#222222]">
+        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-[#0B0C12]">
+          <table className="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead className="bg-[#181B28] text-slate-400 uppercase text-xs border-b border-slate-800 font-bold">
               <tr>
-                <th className="px-3.5 py-2.5">Rank</th>
-                <th className="px-3.5 py-2.5">ID</th>
-                <th className="px-3.5 py-2.5">Setup Model</th>
-                <th className="px-3.5 py-2.5">Asset</th>
-                <th className="px-3.5 py-2.5">Sample</th>
-                <th className="px-3.5 py-2.5">Win Rate</th>
-                <th className="px-3.5 py-2.5">Avg RR</th>
-                <th className="px-3.5 py-2.5">Expectancy</th>
-                <th className="px-3.5 py-2.5">Net Yield</th>
-                <th className="px-3.5 py-2.5">Verdict</th>
+                <th className="px-5 py-3.5">Rank</th>
+                <th className="px-5 py-3.5">ID</th>
+                <th className="px-5 py-3.5">Setup Model</th>
+                <th className="px-5 py-3.5">Asset</th>
+                <th className="px-5 py-3.5">Sample</th>
+                <th className="px-5 py-3.5">Win Rate</th>
+                <th className="px-5 py-3.5">Avg RR</th>
+                <th className="px-5 py-3.5">Expectancy</th>
+                <th className="px-5 py-3.5">Net Yield</th>
+                <th className="px-5 py-3.5">Verdict</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#222222] text-[#CCC]">
+            <tbody className="divide-y divide-slate-800 text-slate-200">
               {setupRankings.map((row, idx) => (
                 <tr
                   key={row.experiment.id}
                   onClick={() => onSelectExperiment(row.experiment)}
-                  className="hover:bg-[#151515] transition-colors cursor-pointer"
+                  className="hover:bg-[#181B28]/70 transition-colors cursor-pointer"
                 >
-                  <td className="px-3.5 py-2.5 font-bold text-[#666]">#{idx + 1}</td>
-                  <td className="px-3.5 py-2.5 font-bold text-white">{row.experiment.id}</td>
-                  <td className="px-3.5 py-2.5 font-sans font-medium text-white max-w-xs truncate">{row.setup}</td>
-                  <td className="px-3.5 py-2.5 text-[#00FF00] font-bold">{row.pair}</td>
-                  <td className="px-3.5 py-2.5">{row.trades}</td>
-                  <td className="px-3.5 py-2.5 font-bold text-[#00FF00]">{row.winRate}%</td>
-                  <td className="px-3.5 py-2.5 text-white">{row.avgRR}R</td>
-                  <td className="px-3.5 py-2.5 text-[#00FF00] font-bold">
+                  <td className="px-5 py-4 font-bold text-slate-400">#{idx + 1}</td>
+                  <td className="px-5 py-4 font-bold text-white text-sm">{row.experiment.id}</td>
+                  <td className="px-5 py-4 font-semibold text-white max-w-xs truncate">{row.setup}</td>
+                  <td className="px-5 py-4 text-[#00FF66] font-bold">{row.pair}</td>
+                  <td className="px-5 py-4 font-bold">{row.trades}</td>
+                  <td className="px-5 py-4 font-extrabold text-[#00FF66] text-sm">{row.winRate}%</td>
+                  <td className="px-5 py-4 text-white font-bold">{row.avgRR}R</td>
+                  <td className="px-5 py-4 text-[#00FF66] font-extrabold">
                     {row.expectancy >= 0 ? '+' : ''}{row.expectancy}R
                   </td>
-                  <td className={`px-3.5 py-2.5 font-bold ${row.netR >= 0 ? 'text-[#00FF00]' : 'text-[#FF3333]'}`}>
+                  <td className={`px-5 py-4 font-extrabold text-sm ${row.netR >= 0 ? 'text-[#00FF66]' : 'text-rose-400'}`}>
                     {row.netR >= 0 ? '+' : ''}{row.netR}R
                   </td>
-                  <td className="px-3.5 py-2.5">
+                  <td className="px-5 py-4">
                     <span
-                      className={`text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${
+                      className={`text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${
                         row.verdict === 'KEEP'
-                          ? 'bg-[#002200] text-[#00FF00] border-[#006600]'
+                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
                           : row.verdict === 'KEEP_TESTING'
-                          ? 'bg-[#221A00] text-[#FFCC00] border-[#664400]'
+                          ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
                           : row.verdict === 'DISCARD'
-                          ? 'bg-[#220000] text-[#FF3333] border-[#660000]'
-                          : 'bg-[#111] text-[#AAA] border-[#333]'
+                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/40'
+                          : 'bg-slate-800 text-slate-300 border-slate-700'
                       }`}
                     >
                       {row.verdict.replace('_', ' ')}

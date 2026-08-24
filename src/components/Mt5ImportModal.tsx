@@ -3,7 +3,7 @@ import { Experiment, SessionType, SingleTrade, TimeframeType, VerdictType } from
 import { parseMt5OrCsvText } from '../utils/mt5Parser';
 import { calculateTradeStats } from '../utils/calculations';
 import { getNextUniqueExperimentId } from '../utils/idGenerator';
-import { X, FileSpreadsheet, ArrowRight, CheckCircle2, AlertCircle, FileText } from 'lucide-react';
+import { X, FileSpreadsheet, ArrowRight, CheckCircle2, AlertCircle, FileText, Upload } from 'lucide-react';
 
 interface Mt5ImportModalProps {
   onClose: () => void;
@@ -60,7 +60,7 @@ export const Mt5ImportModal: React.FC<Mt5ImportModalProps> = ({
       trades: parsedTrades,
       keyFinding: keyFinding.trim() || 'Verified live execution dataset imported from MT5.',
       verdict,
-      screenshotUrls: ['https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=1200&q=80'],
+      screenshotUrls: [],
       tags: ['mt5-import', 'tradetally', pair.toLowerCase(), session.toLowerCase()],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -82,55 +82,55 @@ export const Mt5ImportModal: React.FC<Mt5ImportModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-sm overflow-y-auto font-sans">
-      <div className="relative w-full max-w-3xl bg-[#111111] border border-[#2A2A2A] rounded shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col font-mono text-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto font-sans">
+      <div className="relative w-full max-w-3xl bg-[#12131D] border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col font-mono text-xs sm:text-sm">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-[#222222] bg-[#161616] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded bg-[#1C1C1C] border border-[#333333] flex items-center justify-center text-[#00FF00]">
-              <FileSpreadsheet className="w-4 h-4" />
+        <div className="px-6 py-5 border-b border-slate-800 bg-[#161826] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#1E2235] border border-slate-700 flex items-center justify-center text-[#00FF66]">
+              <FileSpreadsheet className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xs font-bold text-white uppercase tracking-wider">
-                Import MT5 / TradeTally / CSV History
+              <h2 className="text-base sm:text-lg font-extrabold text-white">
+                Import MT5 / TradeTally / CSV Statement
               </h2>
-              <p className="text-[10px] text-[#666]">
-                Parse raw trade logs to calculate R-multiples and generate stats
+              <p className="text-xs text-slate-400 font-sans mt-0.5">
+                Automatically convert raw MetaTrader logs into R-multiple distributions
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[#666] hover:text-white rounded hover:bg-[#222] transition-colors"
+            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <form onSubmit={handleImport} className="flex-1 p-4 overflow-y-auto space-y-3.5">
+        <form onSubmit={handleImport} className="flex-1 p-6 overflow-y-auto space-y-4 font-sans">
           {/* Metadata Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 font-mono">
             <div>
-              <label className="block text-[10px] font-bold uppercase text-[#888] mb-1">
-                Experiment ID
+              <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
+                Study ID
               </label>
               <input
                 type="text"
                 value={experimentId}
                 onChange={(e) => setExperimentId(e.target.value.toUpperCase())}
-                className="w-full px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] font-mono text-[#00FF00] font-bold focus:border-[#00FF00] focus:outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#181B28] border border-slate-700 text-[#00FF66] font-bold focus:border-[#00FF66] focus:outline-none"
                 required
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase text-[#888] mb-1">
+              <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
                 Asset / Pair
               </label>
               <select
                 value={pair}
                 onChange={(e) => setPair(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] text-white focus:border-[#00FF00] focus:outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#181B28] border border-slate-700 text-white font-bold focus:border-[#00FF66] focus:outline-none"
               >
                 {['EURUSD', 'GBPUSD', 'XAUUSD', 'US100', 'BTCUSD', 'USDJPY', 'GBPJPY', 'AUDUSD'].map((p) => (
                   <option key={p} value={p}>
@@ -140,15 +140,15 @@ export const Mt5ImportModal: React.FC<Mt5ImportModalProps> = ({
               </select>
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase text-[#888] mb-1">
+              <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
                 Timeframe
               </label>
               <select
                 value={timeframe}
                 onChange={(e) => setTimeframe(e.target.value as TimeframeType)}
-                className="w-full px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] text-white focus:border-[#00FF00] focus:outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#181B28] border border-slate-700 text-white font-bold focus:border-[#00FF66] focus:outline-none"
               >
-                {['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1'].map((tf) => (
+                {['M1', 'M5', 'M15', 'H1', 'H4', 'D1'].map((tf) => (
                   <option key={tf} value={tf}>
                     {tf}
                   </option>
@@ -156,15 +156,15 @@ export const Mt5ImportModal: React.FC<Mt5ImportModalProps> = ({
               </select>
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase text-[#888] mb-1">
+              <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
                 Session
               </label>
               <select
                 value={session}
                 onChange={(e) => setSession(e.target.value as SessionType)}
-                className="w-full px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] text-white focus:border-[#00FF00] focus:outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#181B28] border border-slate-700 text-white font-bold focus:border-[#00FF66] focus:outline-none"
               >
-                {['London', 'New York Open', 'New York PM', 'Asian', 'London/NY Overlap'].map((s) => (
+                {['London', 'New York', 'Asia', 'London Close'].map((s) => (
                   <option key={s} value={s}>
                     {s}
                   </option>
@@ -173,118 +173,72 @@ export const Mt5ImportModal: React.FC<Mt5ImportModalProps> = ({
             </div>
           </div>
 
-          {/* Setup Model & Verdict */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label className="block text-[10px] font-bold uppercase text-[#888] mb-1">
-                Setup Model
-              </label>
-              <input
-                type="text"
-                value={setupModel}
-                onChange={(e) => setSetupModel(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] text-white focus:border-[#00FF00] focus:outline-none font-sans"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold uppercase text-[#888] mb-1">
-                Verdict
-              </label>
-              <select
-                value={verdict}
-                onChange={(e) => setVerdict(e.target.value as VerdictType)}
-                className="w-full px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] text-white font-semibold focus:border-[#00FF00] focus:outline-none"
-              >
-                <option value="KEEP">🟢 KEEP (Verified Edge)</option>
-                <option value="KEEP_TESTING">🟡 KEEP TESTING</option>
-                <option value="DISCARD">🔴 DISCARD</option>
-                <option value="MODIFY_PARAMS">🔄 MODIFY PARAMS</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Raw Text Input & File Upload */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <label className="text-[10px] font-bold uppercase text-[#888]">
+          {/* Paste CSV Box */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <label className="font-bold text-slate-300 uppercase">
                 Paste MT5 Report / CSV Text
               </label>
-              <label className="cursor-pointer text-[#00FF00] hover:text-[#00CC00] font-semibold flex items-center gap-1 text-[11px]">
-                <FileText className="w-3.5 h-3.5" />
-                <span>Upload .csv / .txt</span>
-                <input type="file" accept=".csv,.txt,.tsv" onChange={handleFileUpload} className="hidden" />
+              <label className="cursor-pointer text-[#00FF66] hover:underline font-bold flex items-center gap-1.5">
+                <Upload className="w-3.5 h-3.5" />
+                <span>Upload CSV File</span>
+                <input type="file" accept=".csv,.txt" onChange={handleFileUpload} className="hidden" />
               </label>
             </div>
             <textarea
-              rows={5}
+              rows={6}
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              placeholder="Paste comma, tab or semicolon delimited trade rows..."
-              className="w-full p-2.5 rounded bg-[#0A0A0A] border border-[#222222] font-mono text-[11px] text-[#CCC] focus:outline-none focus:border-[#00FF00]"
+              className="w-full p-3.5 rounded-xl bg-[#0B0C12] border border-slate-700 text-xs font-mono text-slate-200 focus:outline-none focus:border-[#00FF66]"
+              placeholder="Ticket,Open Time,Type,Size,Item,Price,S/L,T/P,Close Time,Price,Profit,Realized R..."
             />
           </div>
 
-          {/* Auto Parsed Real-Time Stats Preview */}
-          <div className="p-3 rounded bg-[#0A0A0A] border border-[#222222]">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-[#00FF00] mb-2 flex items-center justify-between">
-              <span>Auto-Calculated Import Metrics</span>
-              <span className="font-mono text-[#666]">{parsedTrades.length} Trades Parsed</span>
+          {/* Parsed Preview Statistics */}
+          <div className="p-4 rounded-2xl bg-[#0B0C12] border border-slate-800 font-mono">
+            <div className="flex items-center justify-between mb-3 text-xs">
+              <span className="font-bold uppercase text-slate-400">
+                Parsed Executions Preview ({parsedTrades.length} Trades)
+              </span>
+              <span className="text-[#00FF66] font-bold">
+                Win Rate: {stats.winRate}% | Net Yield: {stats.netR >= 0 ? '+' : ''}{stats.netR}R
+              </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-              <div className="p-2 rounded bg-[#161616] border border-[#222222]">
-                <span className="text-[9px] text-[#777] uppercase">Win Rate</span>
-                <div className="text-sm font-bold font-mono text-[#00FF00] mt-0.5">{stats.winRate}%</div>
+            <div className="grid grid-cols-4 gap-2 text-center text-xs">
+              <div className="p-2.5 rounded-xl bg-[#181B28] border border-slate-800">
+                <span className="text-slate-400 block text-xs">Total Trades</span>
+                <span className="text-white font-extrabold text-sm sm:text-base mt-0.5 block">{stats.totalTrades}</span>
               </div>
-              <div className="p-2 rounded bg-[#161616] border border-[#222222]">
-                <span className="text-[9px] text-[#777] uppercase">Net Yield</span>
-                <div className={`text-sm font-bold font-mono mt-0.5 ${stats.netR >= 0 ? 'text-[#00FF00]' : 'text-[#FF3333]'}`}>
-                  {stats.netR >= 0 ? '+' : ''}{stats.netR}R
-                </div>
+              <div className="p-2.5 rounded-xl bg-[#181B28] border border-slate-800">
+                <span className="text-slate-400 block text-xs">Win / Loss</span>
+                <span className="text-[#00FF66] font-extrabold text-sm sm:text-base mt-0.5 block">{stats.wins}W / {stats.losses}L</span>
               </div>
-              <div className="p-2 rounded bg-[#161616] border border-[#222222]">
-                <span className="text-[9px] text-[#777] uppercase">Expectancy</span>
-                <div className="text-sm font-bold font-mono text-[#00FF00] mt-0.5">
-                  {stats.expectancy >= 0 ? '+' : ''}{stats.expectancy}R
-                </div>
+              <div className="p-2.5 rounded-xl bg-[#181B28] border border-slate-800">
+                <span className="text-slate-400 block text-xs">Avg Payoff</span>
+                <span className="text-white font-extrabold text-sm sm:text-base mt-0.5 block">{stats.avgRR}R</span>
               </div>
-              <div className="p-2 rounded bg-[#161616] border border-[#222222]">
-                <span className="text-[9px] text-[#777] uppercase">Loss Streak</span>
-                <div className="text-sm font-bold font-mono text-[#FF3333] mt-0.5">{stats.maxConsecutiveLosses}</div>
+              <div className="p-2.5 rounded-xl bg-[#181B28] border border-slate-800">
+                <span className="text-slate-400 block text-xs">Expectancy</span>
+                <span className="text-[#00D2FF] font-extrabold text-sm sm:text-base mt-0.5 block">{stats.expectancy >= 0 ? '+' : ''}{stats.expectancy}R</span>
               </div>
             </div>
           </div>
 
-          {/* Key Finding */}
-          <div>
-            <label className="block text-[10px] font-bold uppercase text-[#888] mb-1">
-              Key Finding for WhatsApp Report
-            </label>
-            <input
-              type="text"
-              value={keyFinding}
-              onChange={(e) => setKeyFinding(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] text-white focus:border-[#00FF00] focus:outline-none font-sans text-xs"
-            />
-          </div>
-
-          {/* Submit Buttons */}
-          <div className="pt-3 border-t border-[#222222] flex items-center justify-end gap-2">
+          <div className="pt-3 border-t border-slate-800 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-3 py-1.5 rounded text-[#777] hover:text-white hover:bg-[#1A1A1A] transition-colors"
+              className="px-5 py-2.5 rounded-xl bg-[#181B28] hover:bg-[#1E2235] text-slate-300 hover:text-white font-bold text-xs sm:text-sm transition-colors border border-slate-700"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={parsedTrades.length === 0}
-              className="px-4 py-1.5 rounded bg-[#00FF00] hover:bg-[#00CC00] text-black font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_10px_rgba(0,255,0,0.2)] disabled:opacity-40 transition-colors"
+              className="px-6 py-2.5 rounded-xl bg-[#00FF66] hover:bg-[#00E05A] text-black font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_15px_rgba(0,255,102,0.3)] transition-all disabled:opacity-40"
             >
-              <CheckCircle2 className="w-3.5 h-3.5 stroke-[3]" />
-              <span>Import {parsedTrades.length} Trades</span>
+              Import {parsedTrades.length} Trades
             </button>
           </div>
         </form>

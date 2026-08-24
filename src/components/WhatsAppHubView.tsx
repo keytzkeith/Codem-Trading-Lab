@@ -52,28 +52,31 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
 
   if (experiments.length === 0) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
-          <div className="flex items-center gap-2 mb-0.5">
-            <div className="w-2 h-2 rounded-full bg-[#00FF00] shadow-[0_0_8px_#00FF00]" />
-            <h1 className="text-sm font-bold text-white uppercase tracking-[0.15em] font-mono">
-              WhatsApp Publishing Hub & Card Studio
-            </h1>
+          <div className="flex items-center gap-2.5 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono uppercase bg-[#00FF66]/10 text-[#00FF66] border border-[#00FF66]/30">
+              <span className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" />
+              WhatsApp Studio
+            </span>
           </div>
-          <p className="text-[11px] text-[#666]">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            WhatsApp Publishing Hub & Card Studio
+          </h1>
+          <p className="text-sm text-slate-300 mt-1">
             Automated Markdown report generation, high-density PNG card exports, and group broadcasts.
           </p>
         </div>
 
-        <div className="bg-[#111111] border border-[#222222] border-dashed p-10 rounded text-center space-y-3">
-          <div className="w-10 h-10 rounded bg-[#1A1A1A] border border-[#333] flex items-center justify-center mx-auto text-[#00FF00]">
-            <Share2 className="w-5 h-5" />
+        <div className="bg-[#12131D] border border-slate-800/80 border-dashed p-10 rounded-2xl text-center space-y-4 shadow-xl">
+          <div className="w-12 h-12 rounded-full bg-[#181B28] border border-slate-700 flex items-center justify-center mx-auto text-[#00FF66]">
+            <Share2 className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+            <h4 className="text-lg font-bold text-white uppercase tracking-wider">
               No Experiments Available to Dispatch
             </h4>
-            <p className="text-xs text-[#777] max-w-md mx-auto mt-1">
+            <p className="text-sm text-slate-300 max-w-md mx-auto mt-1 leading-relaxed">
               Create your first real trading experiment or import your trade history from MT5/CSV to generate WhatsApp report cards and copy-paste text templates.
             </p>
           </div>
@@ -81,7 +84,7 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
             {onOpenNewExperiment && (
               <button
                 onClick={onOpenNewExperiment}
-                className="px-4 py-2 bg-[#00FF00] hover:bg-[#00CC00] text-black text-xs font-bold rounded uppercase tracking-wider flex items-center gap-1.5 transition-colors shadow-[0_0_10px_rgba(0,255,0,0.2)]"
+                className="px-5 py-2.5 bg-[#00FF66] hover:bg-[#00E05A] text-black text-sm font-extrabold rounded-xl uppercase tracking-wider flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(0,255,102,0.25)]"
               >
                 <Plus className="w-4 h-4 stroke-[3]" />
                 <span>Create Experiment</span>
@@ -90,9 +93,9 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
             {onOpenMt5Import && (
               <button
                 onClick={onOpenMt5Import}
-                className="px-4 py-2 bg-[#1A1A1A] hover:bg-[#222] text-[#CCC] hover:text-white text-xs font-semibold rounded border border-[#333] flex items-center gap-1.5 transition-colors"
+                className="px-5 py-2.5 bg-[#171926] hover:bg-[#1E2132] text-slate-200 hover:text-white text-sm font-bold rounded-xl border border-slate-700 flex items-center gap-2 transition-colors"
               >
-                <Plus className="w-4 h-4 text-[#00FF00]" />
+                <Plus className="w-4 h-4 text-[#00FF66]" />
                 <span>Import MT5 / CSV</span>
               </button>
             )}
@@ -169,46 +172,49 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-0.5">
-            <div className="w-2 h-2 rounded-full bg-[#00FF00] shadow-[0_0_8px_#00FF00]" />
-            <h1 className="text-sm font-bold text-white uppercase tracking-[0.15em] font-mono">
-              WhatsApp Publishing Hub & Card Studio
-            </h1>
+          <div className="flex items-center gap-2.5 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono uppercase bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/30">
+              <span className="w-2 h-2 rounded-full bg-[#25D366] shadow-[0_0_8px_#25D366]" />
+              WhatsApp Studio & Dispatcher
+            </span>
           </div>
-          <p className="text-[11px] text-[#666]">
-            Automated Markdown report generation, high-density PNG card exports, and group broadcasts.
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            WhatsApp Publishing Hub & Card Studio
+          </h1>
+          <p className="text-sm text-slate-300 mt-1">
+            Automated Markdown report generation, high-density PNG card exports, and instant group broadcasts.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => currentExp && openWhatsAppShare(formattedText)}
-            className="px-3.5 py-1.5 rounded bg-[#00FF00] hover:bg-[#00CC00] text-black font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_10px_rgba(0,255,0,0.2)] transition-colors"
+            className="px-5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-black font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-[0_0_20px_rgba(37,211,102,0.35)] transition-all hover:scale-[1.02]"
           >
-            <Send className="w-3.5 h-3.5 stroke-[3]" />
+            <Send className="w-4 h-4 stroke-[3]" />
             <span>Broadcast to WhatsApp</span>
           </button>
         </div>
       </div>
 
       {/* Main Studio Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Side: Select Experiment & Settings (5 cols) */}
-        <div className="lg:col-span-5 space-y-3">
+        <div className="lg:col-span-5 space-y-4">
           {/* 1. Pick Experiment */}
-          <div className="p-3.5 rounded bg-[#111111] border border-[#222222] space-y-1.5">
-            <label className="block text-[10px] font-bold uppercase tracking-wider text-[#888] flex items-center justify-between font-mono">
+          <div className="p-5 rounded-2xl bg-[#12131D] border border-slate-800/80 space-y-2 shadow-lg">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center justify-between font-mono">
               <span>Select Research Experiment</span>
-              <span className="text-[#00FF00] font-mono">{experiments.length} available</span>
+              <span className="text-[#00FF66] font-bold font-mono">{experiments.length} available</span>
             </label>
             <select
               value={selectedExpId}
               onChange={(e) => setSelectedExpId(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] text-xs text-white font-mono focus:outline-none focus:border-[#00FF00]"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#181B28] border border-slate-700/80 text-sm text-white font-mono font-semibold focus:outline-none focus:border-[#00FF66]"
             >
               {experiments.map((exp) => (
                 <option key={exp.id} value={exp.id}>
@@ -219,11 +225,11 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
           </div>
 
           {/* 2. Format Template */}
-          <div className="p-3.5 rounded bg-[#111111] border border-[#222222] space-y-2">
-            <label className="block text-[10px] font-bold uppercase tracking-wider text-[#888] font-mono">
+          <div className="p-5 rounded-2xl bg-[#12131D] border border-slate-800/80 space-y-3 shadow-lg">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 font-mono">
               Message Template Style
             </label>
-            <div className="grid grid-cols-2 gap-1.5 font-mono">
+            <div className="grid grid-cols-2 gap-2 font-mono">
               {[
                 { id: 'standard_summary', label: '🧪 Standard Backtest' },
                 { id: 'detailed_breakdown', label: '🔬 Deep-Dive Log' },
@@ -233,10 +239,10 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
                 <button
                   key={t.id}
                   onClick={() => setSelectedTemplate(t.id as WhatsAppTemplateId)}
-                  className={`p-2 rounded text-left border text-[11px] font-semibold transition-all ${
+                  className={`p-3 rounded-xl text-left border text-xs sm:text-sm font-bold transition-all ${
                     selectedTemplate === t.id
-                      ? 'bg-[#1A1A1A] border-[#00FF00] text-[#00FF00]'
-                      : 'bg-[#141414] border-[#222222] text-[#777] hover:bg-[#1A1A1A]'
+                      ? 'bg-[#1E2235] border-[#00FF66] text-[#00FF66] shadow-[0_0_10px_rgba(0,255,102,0.15)]'
+                      : 'bg-[#181B28] border-slate-800 text-slate-400 hover:bg-[#1E2235] hover:text-white'
                   }`}
                 >
                   {t.label}
@@ -246,147 +252,153 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
           </div>
 
           {/* 3. Card Visual Style */}
-          <div className="p-3.5 rounded bg-[#111111] border border-[#222222] space-y-2">
-            <label className="block text-[10px] font-bold uppercase tracking-wider text-[#888] flex items-center gap-1.5 font-mono">
-              <Palette className="w-3 h-3 text-[#FF6A00]" />
-              Visual Card Theme
+          <div className="p-5 rounded-2xl bg-[#12131D] border border-slate-800/80 space-y-3 shadow-lg">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2 font-mono">
+              <Palette className="w-4 h-4 text-[#FF6A00]" />
+              <span>Report Card Visual Theme</span>
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 font-mono">
+            <div className="grid grid-cols-2 gap-2 text-xs font-mono">
               {[
-                { id: 'codem_orange', label: '🔥 Codem Orange' },
-                { id: 'cyber_dark', label: 'Terminal Dark' },
-                { id: 'emerald_terminal', label: 'Neon Green' },
-                { id: 'midnight_stealth', label: 'Monochrome' },
-              ].map((theme) => (
+                { id: 'codem_orange', label: 'CODEM Orange (Signature)' },
+                { id: 'cyber_dark', label: 'Cyan Cyber' },
+                { id: 'emerald_terminal', label: 'Emerald Quant' },
+                { id: 'midnight_stealth', label: 'Stealth Midnight' },
+              ].map((th) => (
                 <button
-                  key={theme.id}
-                  onClick={() => setCardTheme(theme.id as any)}
-                  className={`p-1.5 rounded text-[10px] text-center border font-medium transition-all ${
-                    cardTheme === theme.id
-                      ? 'bg-[#1A1A1A] border-[#FF6A00] text-[#FF6A00] font-bold shadow-[0_0_8px_rgba(255,106,0,0.2)]'
-                      : 'bg-[#141414] border-[#222222] text-[#777]'
+                  key={th.id}
+                  onClick={() => setCardTheme(th.id as any)}
+                  className={`p-2.5 rounded-xl border font-bold transition-all text-left ${
+                    cardTheme === th.id
+                      ? 'bg-[#1E2235] border-[#FF6A00] text-[#FF8C00] shadow-[0_0_10px_rgba(255,106,0,0.2)]'
+                      : 'bg-[#181B28] border-slate-800 text-slate-400 hover:text-white'
                   }`}
                 >
-                  {theme.label}
+                  {th.label}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* 4. Target WhatsApp Groups */}
-          <div className="p-3.5 rounded bg-[#111111] border border-[#222222] space-y-2 font-mono">
-            <div className="flex items-center justify-between">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-[#888]">
-                Preset WhatsApp Channels
-              </label>
-            </div>
+          {/* 4. Custom Key Finding / Note */}
+          <div className="p-5 rounded-2xl bg-[#12131D] border border-slate-800/80 space-y-2 shadow-lg">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 font-mono">
+              Custom Commentary / Key Finding
+            </label>
+            <textarea
+              rows={3}
+              value={customNote}
+              onChange={(e) => setCustomNote(e.target.value)}
+              placeholder="Override finding notes with your custom takeaway..."
+              className="w-full p-3 rounded-xl bg-[#181B28] border border-slate-700/80 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-[#00FF66] font-sans"
+            />
+          </div>
 
-            <div className="space-y-1">
-              {availableGroups.map((group) => (
+          {/* 5. WhatsApp Broadcast Groups */}
+          <div className="p-5 rounded-2xl bg-[#12131D] border border-slate-800/80 space-y-3 shadow-lg">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center justify-between font-mono">
+              <span>Managed WhatsApp Channels</span>
+              <span className="text-slate-400">{availableGroups.length} channels</span>
+            </label>
+
+            <form onSubmit={handleAddGroup} className="flex gap-2">
+              <input
+                type="text"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                placeholder="Add Channel / Group Name..."
+                className="flex-1 px-3.5 py-2 rounded-xl bg-[#181B28] border border-slate-700 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-[#00FF66]"
+              />
+              <button
+                type="submit"
+                className="px-3.5 py-2 rounded-xl bg-[#1E2235] hover:bg-[#282E47] text-white text-xs font-bold uppercase tracking-wider border border-slate-700"
+              >
+                Add
+              </button>
+            </form>
+
+            <div className="flex flex-wrap gap-2 pt-1">
+              {availableGroups.map((grp) => (
                 <div
-                  key={group}
-                  onClick={() => setActiveGroup(group)}
-                  className={`flex items-center justify-between px-2.5 py-1.5 rounded border text-[11px] cursor-pointer transition-all ${
-                    activeGroup === group
-                      ? 'bg-[#1A1A1A] border-[#00FF00]/60 text-[#00FF00] font-semibold'
-                      : 'bg-[#141414] border-[#222222] text-[#777] hover:bg-[#1A1A1A]'
+                  key={grp}
+                  className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-colors ${
+                    activeGroup === grp
+                      ? 'bg-[#25D366]/20 border-[#25D366]/50 text-[#25D366]'
+                      : 'bg-[#181B28] border-slate-800 text-slate-300'
                   }`}
                 >
-                  <span className="flex items-center gap-2">
-                    <MessageSquare className="w-3 h-3" />
-                    {group}
+                  <span
+                    className="cursor-pointer"
+                    onClick={() => setActiveGroup(grp)}
+                  >
+                    {grp}
                   </span>
                   {availableGroups.length > 1 && (
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveGroup(group);
-                      }}
-                      className="p-0.5 text-[#555] hover:text-[#FF3333]"
+                      onClick={() => handleRemoveGroup(grp)}
+                      className="text-slate-500 hover:text-rose-400"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      ×
                     </button>
                   )}
                 </div>
               ))}
             </div>
-
-            <form onSubmit={handleAddGroup} className="flex gap-1.5 pt-1">
-              <input
-                type="text"
-                placeholder="Add custom group name..."
-                value={newGroupName}
-                onChange={(e) => setNewGroupName(e.target.value)}
-                className="flex-1 px-2.5 py-1.5 rounded bg-[#161616] border border-[#2A2A2A] text-xs text-white placeholder-[#555] focus:outline-none focus:border-[#00FF00]"
-              />
-              <button
-                type="submit"
-                className="px-2.5 py-1.5 rounded bg-[#1A1A1A] hover:bg-[#222] text-xs text-[#00FF00] font-bold border border-[#333]"
-              >
-                + Add
-              </button>
-            </form>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-2 gap-2 pt-1 font-mono">
-            <button
-              onClick={handleCopyText}
-              className={`p-2.5 rounded text-xs font-bold border flex items-center justify-center gap-1.5 transition-all ${
-                copiedText
-                  ? 'bg-[#002200] border-[#006600] text-[#00FF00]'
-                  : 'bg-[#161616] border-[#2A2A2A] text-[#CCC] hover:bg-[#1E1E1E]'
-              }`}
-            >
-              {copiedText ? <Check className="w-3.5 h-3.5 text-[#00FF00]" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedText ? 'Copied Markdown' : 'Copy Text'}</span>
-            </button>
-
-            <button
-              onClick={handleDownloadCard}
-              disabled={isExporting}
-              className="p-2.5 rounded bg-[#1A1A1A] hover:bg-[#222] text-white font-bold text-xs flex items-center justify-center gap-1.5 border border-[#333] transition-all disabled:opacity-50"
-            >
-              <Download className="w-3.5 h-3.5 text-[#00FF00]" />
-              <span>{isExporting ? 'Exporting...' : 'Export Card PNG'}</span>
-            </button>
           </div>
         </div>
 
-        {/* Right Side: Live Visual Report Card & WhatsApp Chat Preview (7 cols) */}
-        <div className="lg:col-span-7 space-y-3">
-          {currentExp ? (
-            <div className="p-4 rounded bg-[#111111] border border-[#222222] flex flex-col items-center justify-center">
-              <div className="w-full flex items-center justify-between mb-3 font-mono text-[10px]">
-                <span className="font-bold uppercase tracking-wider text-[#888]">
-                  Live Visual Card Canvas ({cardTheme.replace('_', ' ')})
-                </span>
-                <span className="text-[#00FF00]">
-                  Target: {activeGroup}
-                </span>
-              </div>
+        {/* Right Side: Visual Card Preview & Formatted Markdown (7 cols) */}
+        <div className="lg:col-span-7 space-y-4">
+          {/* Action Bar */}
+          <div className="p-4 rounded-2xl bg-[#12131D] border border-slate-800/80 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCopyText}
+                className="px-4 py-2 bg-[#1E2235] hover:bg-[#282E47] text-white text-xs sm:text-sm font-bold rounded-xl border border-slate-700 flex items-center gap-2 transition-colors"
+              >
+                {copiedText ? <Check className="w-4 h-4 text-[#00FF66]" /> : <Copy className="w-4 h-4" />}
+                <span>{copiedText ? 'Copied Markdown!' : 'Copy Formatted Text'}</span>
+              </button>
 
-              <div className="transform scale-[0.95] sm:scale-100 origin-center my-1">
-                <VisualReportCard
-                  experiment={currentExp}
-                  theme={cardTheme}
-                  customNote={customNote}
-                />
-              </div>
+              <button
+                onClick={handleDownloadCard}
+                disabled={isExporting}
+                className="px-4 py-2 bg-[#1E2235] hover:bg-[#282E47] text-white text-xs sm:text-sm font-bold rounded-xl border border-slate-700 flex items-center gap-2 transition-colors disabled:opacity-50"
+              >
+                <Download className="w-4 h-4 text-[#FF6A00]" />
+                <span>{isExporting ? 'Generating PNG...' : 'Save Visual Card'}</span>
+              </button>
+            </div>
 
-              {/* Message Preview Text Box below */}
-              <div className="w-full mt-4 p-3 rounded bg-[#0A0A0A] border border-[#222222] text-[11px] font-mono text-[#AAA] whitespace-pre-wrap leading-relaxed">
-                <div className="text-[9px] uppercase font-bold text-[#555] mb-1.5 tracking-wider">
-                  WhatsApp Markdown Preview:
-                </div>
-                {formattedText}
-              </div>
+            <button
+              onClick={() => openWhatsAppShare(formattedText)}
+              className="px-4 py-2 bg-[#25D366] hover:bg-[#20bd5a] text-black font-extrabold text-xs sm:text-sm rounded-xl uppercase tracking-wider flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)]"
+            >
+              <Send className="w-4 h-4 stroke-[3]" />
+              <span>Share to Group</span>
+            </button>
+          </div>
+
+          {/* Visual Card Canvas */}
+          <div className="p-6 rounded-2xl bg-[#08080C] border border-slate-800/80 flex justify-center overflow-x-auto shadow-2xl">
+            {currentExp && (
+              <VisualReportCard
+                experiment={currentExp}
+                theme={cardTheme}
+                customNote={customNote}
+              />
+            )}
+          </div>
+
+          {/* Formatted Text Preview */}
+          <div className="p-5 rounded-2xl bg-[#12131D] border border-slate-800/80 space-y-2 shadow-lg">
+            <div className="flex items-center justify-between text-xs font-mono uppercase text-slate-400 font-bold">
+              <span>Markdown Message Output</span>
+              <span>WhatsApp Native Syntax</span>
             </div>
-          ) : (
-            <div className="p-12 text-center text-[#555] font-mono text-xs">
-              No experiments found. Create an experiment first.
-            </div>
-          )}
+            <pre className="p-4 rounded-xl bg-[#0B0C12] border border-slate-800 text-xs sm:text-sm font-mono text-slate-200 whitespace-pre-wrap max-h-60 overflow-y-auto leading-relaxed">
+              {formattedText}
+            </pre>
+          </div>
         </div>
       </div>
     </div>
