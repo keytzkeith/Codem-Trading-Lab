@@ -156,15 +156,16 @@ function TradingAppInner() {
         setIsSyncing(false);
         if (cloudExperiments && cloudExperiments.length > 0) {
           setExperiments(deduplicateExperiments(cloudExperiments));
-        } else {
-          // If Firestore is completely empty on first launch and we have local demo experiments,
-          // seed them up so the user gets seamless out-of-the-box cloud data
+        } else if (user) {
+          // If Firestore is empty on first launch and user is authenticated, seed initial data
           const localStored = localStorage.getItem(STORAGE_KEY);
           if (localStored) {
             try {
               const parsed = JSON.parse(localStored);
               if (Array.isArray(parsed) && parsed.length > 0) {
-                bulkSaveExperimentsToFirestore(parsed, user?.uid || null).catch(console.error);
+                bulkSaveExperimentsToFirestore(parsed, user.uid).catch((err) =>
+                  console.warn('Could not seed initial data to cloud:', err)
+                );
               }
             } catch (err) {
               console.error(err);
@@ -195,7 +196,7 @@ function TradingAppInner() {
     const sanitized = deduplicateExperiments([newExp, ...experiments]);
     setExperiments(sanitized);
     setShowNewModal(false);
-    showToast(`✅ Saved ${newExp.id} to Firestore Database!`);
+    showToast(`✅ Saved ${newExp.id} to Workspace!`);
     confetti({
       particleCount: 40,
       spread: 60,
@@ -203,13 +204,15 @@ function TradingAppInner() {
       colors: ['#00FF00', '#38bdf8'],
     });
 
-    try {
-      setIsSyncing(true);
-      await saveExperimentToFirestore(newExp, user?.uid || null);
-    } catch (e) {
-      console.warn('Saved to local storage, will sync when cloud connected:', e);
-    } finally {
-      setIsSyncing(false);
+    if (user) {
+      try {
+        setIsSyncing(true);
+        await saveExperimentToFirestore(newExp, user.uid);
+      } catch (e) {
+        console.warn('Saved to local storage, will sync when cloud connected:', e);
+      } finally {
+        setIsSyncing(false);
+      }
     }
   };
 
@@ -218,7 +221,7 @@ function TradingAppInner() {
     const sanitized = deduplicateExperiments([newExp, ...experiments]);
     setExperiments(sanitized);
     setShowMt5Modal(false);
-    showToast(`📊 Saved ${newExp.trades.length} trades (${newExp.id}) to Cloud!`);
+    showToast(`📊 Saved ${newExp.trades.length} trades (${newExp.id})!`);
     confetti({
       particleCount: 50,
       spread: 70,
@@ -226,13 +229,15 @@ function TradingAppInner() {
       colors: ['#38bdf8', '#34d399', '#fbbf24'],
     });
 
-    try {
-      setIsSyncing(true);
-      await saveExperimentToFirestore(newExp, user?.uid || null);
-    } catch (e) {
-      console.warn('Saved to local storage, will sync when cloud connected:', e);
-    } finally {
-      setIsSyncing(false);
+    if (user) {
+      try {
+        setIsSyncing(true);
+        await saveExperimentToFirestore(newExp, user.uid);
+      } catch (e) {
+        console.warn('Saved to local storage, will sync when cloud connected:', e);
+      } finally {
+        setIsSyncing(false);
+      }
     }
   };
 
@@ -244,13 +249,15 @@ function TradingAppInner() {
     }
     showToast(`Updated research parameters for ${updated.id}`);
 
-    try {
-      setIsSyncing(true);
-      await saveExperimentToFirestore(updated, user?.uid || null);
-    } catch (e) {
-      console.warn('Could not sync update to cloud:', e);
-    } finally {
-      setIsSyncing(false);
+    if (user) {
+      try {
+        setIsSyncing(true);
+        await saveExperimentToFirestore(updated, user.uid);
+      } catch (e) {
+        console.warn('Could not sync update to cloud:', e);
+      } finally {
+        setIsSyncing(false);
+      }
     }
   };
 
@@ -259,7 +266,7 @@ function TradingAppInner() {
     setConfirmConfig({
       isOpen: true,
       title: `Delete Experiment ${id}?`,
-      message: `Are you sure you want to permanently delete experiment study ${id} from Firestore? This cannot be undone.`,
+      message: `Are you sure you want to permanently delete experiment study ${id}? This cannot be undone.`,
       confirmLabel: 'Delete Study',
       confirmVariant: 'danger',
       action: async () => {
@@ -268,13 +275,15 @@ function TradingAppInner() {
         if (shareExp?.id === id) setShareExp(null);
         showToast(`🗑️ Deleted experiment ${id}`);
 
-        try {
-          setIsSyncing(true);
-          await deleteExperimentFromFirestore(id);
-        } catch (e) {
-          console.warn('Could not delete from Firestore:', e);
-        } finally {
-          setIsSyncing(false);
+        if (user) {
+          try {
+            setIsSyncing(true);
+            await deleteExperimentFromFirestore(id);
+          } catch (e) {
+            console.warn('Could not delete from Firestore:', e);
+          } finally {
+            setIsSyncing(false);
+          }
         }
       },
     });
@@ -286,22 +295,24 @@ function TradingAppInner() {
       isOpen: true,
       title: 'Reload Demo Datasets?',
       message:
-        'This will reload the 7 default Codem Trading sample studies (BT-028, BT-014, BT-022, etc.) into Firestore and your workspace.',
+        'This will reload the default Codem Trading sample studies into your workspace.',
       confirmLabel: 'Reload Demo Studies',
       confirmVariant: 'warning',
       action: async () => {
         const demo = deduplicateExperiments(INITIAL_EXPERIMENTS);
         setExperiments(demo);
         setWhatsappGroups(DEFAULT_WHATSAPP_GROUPS);
-        showToast('🔄 Database reset to initial demo datasets.');
+        showToast('🔄 Workspace reset to initial demo datasets.');
 
-        try {
-          setIsSyncing(true);
-          await bulkSaveExperimentsToFirestore(demo, user?.uid || null);
-        } catch (e) {
-          console.warn('Could not bulk save to Firestore:', e);
-        } finally {
-          setIsSyncing(false);
+        if (user) {
+          try {
+            setIsSyncing(true);
+            await bulkSaveExperimentsToFirestore(demo, user.uid);
+          } catch (e) {
+            console.warn('Could not bulk save to Firestore:', e);
+          } finally {
+            setIsSyncing(false);
+          }
         }
       },
     });
@@ -314,7 +325,7 @@ function TradingAppInner() {
       isOpen: true,
       title: 'Wipe All Data & Start Clean Slate?',
       message:
-        'This will clear ALL experiments from Firestore cloud database and local storage, leaving you with an empty database ready for your real backtests and live trading data.',
+        'This will clear ALL experiments from your database and local storage, leaving you with an empty workspace ready for real trading data.',
       confirmLabel: 'Wipe Database Clean',
       confirmVariant: 'danger',
       action: async () => {
@@ -328,13 +339,15 @@ function TradingAppInner() {
         }
         showToast('🗑️ Database wiped clean. Ready for real trading data!');
 
-        try {
-          setIsSyncing(true);
-          await clearAllExperimentsInFirestore(existingIds);
-        } catch (e) {
-          console.warn('Could not wipe Firestore database:', e);
-        } finally {
-          setIsSyncing(false);
+        if (user) {
+          try {
+            setIsSyncing(true);
+            await clearAllExperimentsInFirestore(existingIds);
+          } catch (e) {
+            console.warn('Could not wipe Firestore database:', e);
+          } finally {
+            setIsSyncing(false);
+          }
         }
       },
     });

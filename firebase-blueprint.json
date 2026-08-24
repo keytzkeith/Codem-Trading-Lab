@@ -1,20 +1,24 @@
 {
-  "schemaVersion": "1.0",
   "entities": {
     "UserProfile": {
-      "collectionName": "users",
-      "fields": {
+      "title": "UserProfile",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
         "id": { "type": "string" },
         "email": { "type": "string" },
         "displayName": { "type": "string" },
         "photoURL": { "type": "string" },
         "createdAt": { "type": "string" },
         "updatedAt": { "type": "string" }
-      }
+      },
+      "required": ["id", "email"]
     },
     "Experiment": {
-      "collectionName": "experiments",
-      "fields": {
+      "title": "Experiment",
+      "description": "Trading research experiment backtest and forward test studies",
+      "type": "object",
+      "properties": {
         "id": { "type": "string" },
         "userId": { "type": "string" },
         "title": { "type": "string" },
@@ -37,16 +41,33 @@
         "updatedAt": { "type": "string" },
         "publishedToWhatsApp": { "type": "boolean" },
         "publishedAt": { "type": "string" }
-      }
+      },
+      "required": ["id", "pair", "timeframe", "setupModel"]
     },
     "UserSettings": {
-      "collectionName": "user_settings",
-      "fields": {
-        "id": { "type": "string" },
+      "title": "UserSettings",
+      "description": "User specific configurations such as WhatsApp groups",
+      "type": "object",
+      "properties": {
         "userId": { "type": "string" },
         "whatsappGroups": { "type": "array" },
         "updatedAt": { "type": "string" }
-      }
+      },
+      "required": ["userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles for authenticated traders"
+    },
+    "/experiments/{experimentId}": {
+      "schema": "Experiment",
+      "description": "Trading research experiments and backtest records"
+    },
+    "/user_settings/{userId}": {
+      "schema": "UserSettings",
+      "description": "User-specific settings and preferences"
     }
   }
 }

@@ -5,13 +5,78 @@ import {
   deleteDoc,
   onSnapshot,
   getDoc,
+  getDocFromServer,
   writeBatch,
 } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { db, auth } from '../lib/firebase';
 import { Experiment } from '../types/trade';
 
 const EXPERIMENTS_COLLECTION = 'experiments';
 const SETTINGS_COLLECTION = 'user_settings';
+
+export enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+export interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId?: string | null;
+    email?: string | null;
+    emailVerified?: boolean | null;
+    isAnonymous?: boolean | null;
+    tenantId?: string | null;
+    providerInfo?: {
+      providerId?: string | null;
+      email?: string | null;
+    }[];
+  };
+}
+
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid || null,
+      email: auth.currentUser?.email || null,
+      emailVerified: auth.currentUser?.emailVerified || null,
+      isAnonymous: auth.currentUser?.isAnonymous || null,
+      tenantId: auth.currentUser?.tenantId || null,
+      providerInfo:
+        auth.currentUser?.providerData?.map((provider) => ({
+          providerId: provider.providerId,
+          email: provider.email,
+        })) || [],
+    },
+    operationType,
+    path,
+  };
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
+
+/**
+ * Validate connection to Firestore on startup
+ */
+export async function testConnection() {
+  try {
+    await getDocFromServer(doc(db, 'test', 'connection'));
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('the client is offline')) {
+      console.warn('Firestore client is in offline mode or waiting for connection.');
+    }
+  }
+}
+
+// Run connection test
+testConnection();
 
 /**
  * Real-time listener for experiments collection
@@ -58,8 +123,10 @@ export const subscribeToExperiments = (
       callback(items);
     },
     (err) => {
-      console.error('Firestore subscription error:', err);
-      if (onError) onError(err);
+      console.warn('Firestore subscription error (offline/permissions):', err.message);
+      if (onError) {
+        onError(err);
+      }
     }
   );
 };
@@ -71,21 +138,31 @@ export const saveExperimentToFirestore = async (
   experiment: Experiment,
   userId?: string | null
 ) => {
-  const docRef = doc(db, EXPERIMENTS_COLLECTION, experiment.id);
-  const payload = {
-    ...experiment,
-    userId: userId || null,
-    updatedAt: new Date().toISOString(),
-  };
-  await setDoc(docRef, payload, { merge: true });
+  const path = `${EXPERIMENTS_COLLECTION}/${experiment.id}`;
+  try {
+    const docRef = doc(db, EXPERIMENTS_COLLECTION, experiment.id);
+    const payload = {
+      ...experiment,
+      userId: userId || auth.currentUser?.uid || null,
+      updatedAt: new Date().toISOString(),
+    };
+    await setDoc(docRef, payload, { merge: true });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, path);
+  }
 };
 
 /**
  * Delete an experiment from Firestore
  */
 export const deleteExperimentFromFirestore = async (experimentId: string) => {
-  const docRef = doc(db, EXPERIMENTS_COLLECTION, experimentId);
-  await deleteDoc(docRef);
+  const path = `${EXPERIMENTS_COLLECTION}/${experimentId}`;
+  try {
+    const docRef = doc(db, EXPERIMENTS_COLLECTION, experimentId);
+    await deleteDoc(docRef);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, path);
+  }
 };
 
 /**
@@ -93,16 +170,19 @@ export const deleteExperimentFromFirestore = async (experimentId: string) => {
  */
 export const clearAllExperimentsInFirestore = async (experimentIds: string[]) => {
   if (experimentIds.length === 0) return;
-  // Firestore batches support up to 500 operations
   const chunkSize = 400;
-  for (let i = 0; i < experimentIds.length; i += chunkSize) {
-    const chunk = experimentIds.slice(i, i + chunkSize);
-    const batch = writeBatch(db);
-    chunk.forEach((id) => {
-      const ref = doc(db, EXPERIMENTS_COLLECTION, id);
-      batch.delete(ref);
-    });
-    await batch.commit();
+  try {
+    for (let i = 0; i < experimentIds.length; i += chunkSize) {
+      const chunk = experimentIds.slice(i, i + chunkSize);
+      const batch = writeBatch(db);
+      chunk.forEach((id) => {
+        const ref = doc(db, EXPERIMENTS_COLLECTION, id);
+        batch.delete(ref);
+      });
+      await batch.commit();
+    }
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, EXPERIMENTS_COLLECTION);
   }
 };
 
@@ -115,22 +195,26 @@ export const bulkSaveExperimentsToFirestore = async (
 ) => {
   if (experiments.length === 0) return;
   const chunkSize = 400;
-  for (let i = 0; i < experiments.length; i += chunkSize) {
-    const chunk = experiments.slice(i, i + chunkSize);
-    const batch = writeBatch(db);
-    chunk.forEach((exp) => {
-      const ref = doc(db, EXPERIMENTS_COLLECTION, exp.id);
-      batch.set(
-        ref,
-        {
-          ...exp,
-          userId: userId || null,
-          updatedAt: new Date().toISOString(),
-        },
-        { merge: true }
-      );
-    });
-    await batch.commit();
+  try {
+    for (let i = 0; i < experiments.length; i += chunkSize) {
+      const chunk = experiments.slice(i, i + chunkSize);
+      const batch = writeBatch(db);
+      chunk.forEach((exp) => {
+        const ref = doc(db, EXPERIMENTS_COLLECTION, exp.id);
+        batch.set(
+          ref,
+          {
+            ...exp,
+            userId: userId || auth.currentUser?.uid || null,
+            updatedAt: new Date().toISOString(),
+          },
+          { merge: true }
+        );
+      });
+      await batch.commit();
+    }
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, EXPERIMENTS_COLLECTION);
   }
 };
 
@@ -141,19 +225,25 @@ export const saveUserSettingsToFirestore = async (
   userId: string,
   whatsappGroups: string[]
 ) => {
-  const docRef = doc(db, SETTINGS_COLLECTION, userId);
-  await setDoc(
-    docRef,
-    {
-      userId,
-      whatsappGroups,
-      updatedAt: new Date().toISOString(),
-    },
-    { merge: true }
-  );
+  const path = `${SETTINGS_COLLECTION}/${userId}`;
+  try {
+    const docRef = doc(db, SETTINGS_COLLECTION, userId);
+    await setDoc(
+      docRef,
+      {
+        userId,
+        whatsappGroups,
+        updatedAt: new Date().toISOString(),
+      },
+      { merge: true }
+    );
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, path);
+  }
 };
 
 export const fetchUserSettingsFromFirestore = async (userId: string): Promise<string[] | null> => {
+  const path = `${SETTINGS_COLLECTION}/${userId}`;
   try {
     const docRef = doc(db, SETTINGS_COLLECTION, userId);
     const snap = await getDoc(docRef);
@@ -164,7 +254,7 @@ export const fetchUserSettingsFromFirestore = async (userId: string): Promise<st
       }
     }
   } catch (err) {
-    console.error('Error fetching user settings:', err);
+    console.warn('Error fetching user settings from Firestore:', err);
   }
   return null;
 };
@@ -173,6 +263,7 @@ export const fetchUserSettingsFromFirestore = async (userId: string): Promise<st
  * Fetch a single experiment by ID (for direct WhatsApp deep-links)
  */
 export const fetchExperimentById = async (experimentId: string): Promise<Experiment | null> => {
+  const path = `${EXPERIMENTS_COLLECTION}/${experimentId}`;
   try {
     const docRef = doc(db, EXPERIMENTS_COLLECTION, experimentId);
     const snap = await getDoc(docRef);
@@ -203,7 +294,7 @@ export const fetchExperimentById = async (experimentId: string): Promise<Experim
       };
     }
   } catch (err) {
-    console.error('Error fetching experiment by ID:', err);
+    console.warn('Error fetching experiment by ID from Firestore:', err);
   }
   return null;
 };
