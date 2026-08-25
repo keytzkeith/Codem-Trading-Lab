@@ -210,7 +210,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Navigation Tabs Bar - Chunky, High Readability Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto border-t border-slate-800/80 py-2.5 no-scrollbar">
+        <div className="flex items-center gap-2 overflow-x-auto border-t border-slate-800/80 py-3 no-scrollbar">
           {[
             { id: 'overview', label: 'CONTROL CENTER', icon: Layers },
             { id: 'experiments', label: `RESEARCH LAB (${experiments.length})`, icon: Sparkles },

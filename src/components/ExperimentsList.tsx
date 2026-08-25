@@ -24,6 +24,7 @@ interface ExperimentsListProps {
   onOpenNewExperiment: () => void;
   onOpenMt5Import?: () => void;
   onDeleteExperiment: (id: string) => void;
+  onResetData?: () => void;
 }
 
 export const ExperimentsList: React.FC<ExperimentsListProps> = ({
@@ -33,6 +34,7 @@ export const ExperimentsList: React.FC<ExperimentsListProps> = ({
   onOpenNewExperiment,
   onOpenMt5Import,
   onDeleteExperiment,
+  onResetData,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('ALL');
@@ -211,33 +213,45 @@ export const ExperimentsList: React.FC<ExperimentsListProps> = ({
       </div>
 
       {filtered.length === 0 ? (
-        <div className="bg-[#12131D] border border-slate-800/80 border-dashed p-10 rounded-2xl text-center space-y-4 shadow-xl">
-          <div className="w-12 h-12 rounded-full bg-[#181B28] border border-slate-700 flex items-center justify-center mx-auto text-[#00FF66]">
-            <Layers className="w-6 h-6" />
+        <div className="bg-[#12131D] border border-slate-800/80 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-xl">
+          <div className="w-14 h-14 rounded-2xl bg-[#181B28] border border-slate-700 flex items-center justify-center mx-auto text-[#00FF66] shadow-[0_0_20px_rgba(0,255,102,0.15)]">
+            <Layers className="w-7 h-7" />
           </div>
-          <div>
-            <h4 className="text-lg font-bold text-white uppercase tracking-wider">No Experiments Found</h4>
-            <p className="text-sm text-slate-300 max-w-md mx-auto mt-1 leading-relaxed">
+          <div className="max-w-md mx-auto">
+            <h4 className="text-xl font-extrabold text-white tracking-tight">
+              {experiments.length === 0 ? 'No Research Studies in Database' : 'No Experiments Matched Filters'}
+            </h4>
+            <p className="text-sm text-slate-400 mt-2 leading-relaxed">
               {experiments.length === 0
-                ? 'Your database is currently empty. Create your first trading experiment or import from MetaTrader 5.'
-                : 'No experiments matched your current filter criteria.'}
+                ? 'Your laboratory database is ready for your setup hypotheses, MT5 executions, and backtesting samples.'
+                : 'Try adjusting your search query or reset your pair/session/verdict filters to see more results.'}
             </p>
           </div>
-          <div className="flex items-center justify-center gap-3 pt-2">
+
+          <div className="flex items-center justify-center gap-3 flex-wrap pt-2">
             <button
               onClick={onOpenNewExperiment}
               className="px-5 py-2.5 bg-[#00FF66] hover:bg-[#00E05A] text-black text-sm font-extrabold rounded-xl uppercase tracking-wider flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(0,255,102,0.25)]"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
-              <span>Create New Experiment</span>
+              <span>Create New Study</span>
             </button>
             {onOpenMt5Import && (
               <button
                 onClick={onOpenMt5Import}
                 className="px-5 py-2.5 bg-[#171926] hover:bg-[#1E2132] text-slate-200 hover:text-white text-sm font-bold rounded-xl border border-slate-700 flex items-center gap-2 transition-colors"
               >
-                <FileSpreadsheet className="w-4 h-4 text-[#00FF66]" />
-                <span>Import MT5 / CSV</span>
+                <FileSpreadsheet className="w-4 h-4 text-sky-400" />
+                <span>Import MT5 CSV</span>
+              </button>
+            )}
+            {experiments.length === 0 && onResetData && (
+              <button
+                onClick={onResetData}
+                className="px-5 py-2.5 bg-[#171926] hover:bg-[#1E2132] text-amber-400 hover:text-amber-300 text-sm font-bold rounded-xl border border-amber-500/30 flex items-center gap-2 transition-colors"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Load Demo Studies</span>
               </button>
             )}
           </div>

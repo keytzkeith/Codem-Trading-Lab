@@ -26,7 +26,7 @@ import {
   fetchExperimentById,
 } from './services/firestoreService';
 import confetti from 'canvas-confetti';
-import { CheckCircle2, Cloud } from 'lucide-react';
+import { CheckCircle2, Cloud, Layers, Sparkles, BarChart3, Share2, Plus } from 'lucide-react';
 
 function TradingAppInner() {
   const { user } = useAuth();
@@ -420,7 +420,7 @@ function TradingAppInner() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-5 lg:px-6 py-4">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-5 lg:px-6 py-4 pb-24 sm:pb-6">
         {activeTab === 'overview' && (
           <OverviewDashboard
             experiments={experiments}
@@ -428,6 +428,7 @@ function TradingAppInner() {
             onOpenWhatsAppShare={(exp) => setShareExp(exp)}
             onOpenNewExperiment={() => setShowNewModal(true)}
             onOpenMt5Import={() => setShowMt5Modal(true)}
+            onResetData={handleResetData}
           />
         )}
 
@@ -439,6 +440,7 @@ function TradingAppInner() {
             onOpenNewExperiment={() => setShowNewModal(true)}
             onOpenMt5Import={() => setShowMt5Modal(true)}
             onDeleteExperiment={handleDeleteExperiment}
+            onResetData={handleResetData}
           />
         )}
 
@@ -462,6 +464,58 @@ function TradingAppInner() {
           />
         )}
       </main>
+
+      {/* Mobile Floating Bottom Bar for Fast Navigation */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0C0D14]/95 backdrop-blur-lg border-t border-slate-800 px-3 py-2 flex items-center justify-between shadow-2xl">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`flex flex-col items-center gap-1 py-1 px-2 rounded-xl text-[10px] font-bold ${
+            activeTab === 'overview' ? 'text-[#00FF66]' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Layers className="w-4 h-4" />
+          <span>Control</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('experiments')}
+          className={`flex flex-col items-center gap-1 py-1 px-2 rounded-xl text-[10px] font-bold ${
+            activeTab === 'experiments' ? 'text-[#00FF66]' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>Lab</span>
+        </button>
+
+        {/* Center Quick Add Button */}
+        <button
+          onClick={() => setShowNewModal(true)}
+          className="w-10 h-10 rounded-full bg-[#00FF66] text-black flex items-center justify-center -mt-4 shadow-[0_0_15px_rgba(0,255,102,0.4)] border-2 border-[#0A0A0A] font-extrabold hover:scale-105 transition-transform"
+          title="New Study"
+        >
+          <Plus className="w-5 h-5 stroke-[3]" />
+        </button>
+
+        <button
+          onClick={() => setActiveTab('analytics')}
+          className={`flex flex-col items-center gap-1 py-1 px-2 rounded-xl text-[10px] font-bold ${
+            activeTab === 'analytics' ? 'text-[#00FF66]' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <BarChart3 className="w-4 h-4" />
+          <span>Edge</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('whatsapp_hub')}
+          className={`flex flex-col items-center gap-1 py-1 px-2 rounded-xl text-[10px] font-bold ${
+            activeTab === 'whatsapp_hub' ? 'text-[#00FF66]' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Share2 className="w-4 h-4" />
+          <span>WhatsApp</span>
+        </button>
+      </nav>
 
       {/* Footer */}
       <footer className="border-t border-slate-800 bg-[#0C0D14] py-5 mt-auto">
