@@ -161,10 +161,10 @@ export const TradingAnalyticsView: React.FC<TradingAnalyticsViewProps> = ({
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Quant Analytics & Edge Distribution
+            Trade Distribution & Risk Analytics
           </h1>
-          <p className="text-sm text-slate-300 mt-1 font-sans">
-            Payoff frequency, Monte Carlo ruin probabilities, and session liquidity breakdown.
+          <p className="text-sm text-slate-300 mt-1">
+            Payoff frequency, Monte Carlo simulations, and session performance breakdowns.
           </p>
         </div>
 

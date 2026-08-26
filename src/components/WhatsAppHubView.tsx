@@ -187,10 +187,10 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            WhatsApp Publishing Hub & Card Studio
+            WhatsApp Report Studio
           </h1>
           <p className="text-sm text-slate-300 mt-1">
-            Automated Markdown report generation, high-density PNG card exports, and instant group broadcasts.
+            Format strategy performance cards, generate text summaries, and share to WhatsApp groups.
           </p>
         </div>
 

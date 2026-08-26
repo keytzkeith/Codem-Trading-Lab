@@ -78,18 +78,18 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
         <div>
           <div className="flex items-center gap-2.5 mb-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono uppercase bg-[#00FF66]/10 text-[#00FF66] border border-[#00FF66]/30">
-              <span className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66] animate-pulse" />
-              Live Quant Control Center
+              <span className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" />
+              Trading Journal & Analytics
             </span>
             <span className="text-xs font-semibold text-slate-400 font-mono">
               • {experiments.length} Active Studies
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Quantitative Research & Edge Engine
+            Strategy Backtesting & Quantitative Journal
           </h1>
           <p className="text-sm sm:text-base text-slate-300 mt-1 max-w-2xl leading-relaxed">
-            Institutional backtest distributions, cumulative R-multiple performance curves, and instant 1-click WhatsApp research cards.
+            Track performance metrics, evaluate strategy expectancy in R-multiples, and share structured backtest reports.
           </p>
         </div>
 
@@ -114,7 +114,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
 
       {/* Methodology & Quick-Start Guide Banner for First Impression */}
       {showGuide && (
-        <div className="relative bg-gradient-to-r from-[#121422] via-[#16192B] to-[#121422] border border-slate-700/70 p-5 rounded-2xl shadow-lg">
+        <div className="relative bg-[#141624] border border-slate-700/70 p-5 rounded-2xl shadow-lg">
           <div className="flex items-start justify-between gap-4 mb-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-xl bg-[#00FF66]/15 border border-[#00FF66]/30 flex items-center justify-center text-[#00FF66]">
@@ -122,10 +122,10 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-white">
-                  Quantitative Edge Workflow Guide
+                  Strategy Testing Workflow
                 </h3>
                 <p className="text-xs text-slate-400">
-                  How institutional systematic traders formulate and validate edges in CODEM
+                  Four steps to systematically backtest and measure your edge
                 </p>
               </div>
             </div>
@@ -141,40 +141,40 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
             <div className="p-3 bg-[#0B0C12]/80 border border-slate-800 rounded-xl">
               <div className="flex items-center gap-1.5 font-bold text-[#FF8C00] mb-1">
                 <span className="w-5 h-5 rounded-full bg-[#FF8C00]/20 flex items-center justify-center text-[11px]">1</span>
-                <span>Hypothesis Formulation</span>
+                <span>Define Setup</span>
               </div>
               <p className="text-slate-300 leading-relaxed">
-                Define the model setup, timeframe, session window, and planned risk-to-reward target.
+                Choose the instrument, timeframe, session, and entry/exit criteria.
               </p>
             </div>
 
             <div className="p-3 bg-[#0B0C12]/80 border border-slate-800 rounded-xl">
               <div className="flex items-center gap-1.5 font-bold text-sky-400 mb-1">
                 <span className="w-5 h-5 rounded-full bg-sky-400/20 flex items-center justify-center text-[11px]">2</span>
-                <span>Backtest / MT5 Sync</span>
+                <span>Log Executions</span>
               </div>
               <p className="text-slate-300 leading-relaxed">
-                Execute 20–50 consecutive trade samples manually or import an MT5 statement file.
+                Record 20–50 consecutive trades manually or import an MT4/MT5 statement.
               </p>
             </div>
 
             <div className="p-3 bg-[#0B0C12]/80 border border-slate-800 rounded-xl">
               <div className="flex items-center gap-1.5 font-bold text-[#00FF66] mb-1">
                 <span className="w-5 h-5 rounded-full bg-[#00FF66]/20 flex items-center justify-center text-[11px]">3</span>
-                <span>Mathematical Expectancy</span>
+                <span>Review Expectancy</span>
               </div>
               <p className="text-slate-300 leading-relaxed">
-                Verify positive EV, profit factor, max drawdown in R, and optimal liquidity sessions.
+                Examine win rate, profit factor, expected value (EV), and drawdown curves.
               </p>
             </div>
 
             <div className="p-3 bg-[#0B0C12]/80 border border-slate-800 rounded-xl">
               <div className="flex items-center gap-1.5 font-bold text-purple-400 mb-1">
                 <span className="w-5 h-5 rounded-full bg-purple-400/20 flex items-center justify-center text-[11px]">4</span>
-                <span>Visual WhatsApp Cards</span>
+                <span>Export & Share</span>
               </div>
               <p className="text-slate-300 leading-relaxed">
-                Render 1-click high-res report cards & formatted summaries for research groups.
+                Generate clean report cards and formatted Markdown messages for groups.
               </p>
             </div>
           </div>

@@ -519,19 +519,15 @@ function TradingAppInner() {
 
       {/* Footer */}
       <footer className="border-t border-slate-800 bg-[#0C0D14] py-5 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-400 font-mono">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400 font-mono">
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" />
-            <span className="font-extrabold tracking-wider text-slate-200 uppercase">CODEM TRADING LAB</span>
+            <div className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" />
+            <span className="font-bold tracking-wider text-slate-200 uppercase">CODEM TRADING LAB</span>
             <span className="text-slate-600">•</span>
-            <span className="text-slate-400">QUANT RESEARCH TERMINAL</span>
+            <span className="text-slate-300">Built by Keith Odera</span>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-slate-400">
-              STORAGE: <span className="text-[#00FF66] font-bold">FIREBASE FIRESTORE</span>
-            </span>
-            <span className="text-slate-600">•</span>
-            <span className="font-medium text-slate-300">REAL-TIME MULTI-DEVICE SYNC</span>
+          <div className="flex items-center gap-3 text-slate-500 text-xs">
+            <span>© {new Date().getFullYear()} CODEM Trading Lab. All rights reserved.</span>
           </div>
         </div>
       </footer>
