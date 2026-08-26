@@ -19,6 +19,10 @@ import {
   FileText,
   Image as ImageIcon,
   Smartphone,
+  FlaskConical,
+  Microscope,
+  Zap,
+  ClipboardList
 } from 'lucide-react';
 
 interface WhatsAppShareModalProps {
@@ -176,20 +180,21 @@ export const WhatsAppShareModal: React.FC<WhatsAppShareModalProps> = ({
               </label>
               <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                 {[
-                  { id: 'standard_summary', label: '🧪 Standard Backtest' },
-                  { id: 'detailed_breakdown', label: '🔬 Deep-Dive Log' },
-                  { id: 'signal_idea', label: '⚡ Setup Alert' },
-                  { id: 'weekly_digest', label: '📋 Research Digest' },
+                  { id: 'standard_summary', label: 'Standard Backtest', icon: FlaskConical },
+                  { id: 'detailed_breakdown', label: 'Deep-Dive Log', icon: Microscope },
+                  { id: 'signal_idea', label: 'Setup Alert', icon: Zap },
+                  { id: 'weekly_digest', label: 'Research Digest', icon: ClipboardList },
                 ].map((t) => (
                   <button
                     key={t.id}
                     onClick={() => setSelectedTemplate(t.id as WhatsAppTemplateId)}
-                    className={`p-2.5 rounded-xl text-left border font-bold transition-all ${
+                    className={`p-2.5 rounded-xl text-left border font-bold transition-all flex flex-col gap-1.5 ${
                       selectedTemplate === t.id
                         ? 'bg-[#1E2235] border-[#00FF66] text-[#00FF66]'
                         : 'bg-[#12131D] border-slate-800 text-slate-400 hover:text-white'
                     }`}
                   >
+                    <t.icon className="w-4 h-4" />
                     {t.label}
                   </button>
                 ))}

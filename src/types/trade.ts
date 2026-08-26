@@ -77,3 +77,49 @@ export interface WhatsAppReportTemplate {
   name: string;
   description: string;
 }
+
+export interface MonteCarloConfig {
+  simulationsCount: number; // e.g. 1000
+  tradesPerRun: number; // e.g. 50
+  profitTargetR: number; // e.g. 10R (+10% on 1% risk)
+  maxDrawdownR: number; // e.g. 8R or 10R (-8% / -10%)
+  riskPercent: number; // e.g. 1% or 0.5%
+}
+
+export interface MonteCarloSimulationResult {
+  simulationsCount: number;
+  tradesPerRun: number;
+  profitTargetR: number;
+  maxDrawdownR: number;
+  riskPercent: number;
+  passCount: number;
+  passProbability: number; // %
+  ruinCount: number;
+  ruinProbability: number; // %
+  neitherCount: number;
+  neitherProbability: number; // %
+  medianFinalR: number;
+  top95FinalR: number;
+  bottom5FinalR: number;
+  medianMaxDrawdown: number;
+  worstMaxDrawdown: number;
+  fanChartData: {
+    tradeIndex: number;
+    p95: number;
+    median: number;
+    p5: number;
+    path1?: number;
+    path2?: number;
+    path3?: number;
+  }[];
+}
+
+export interface HeatmapCellData {
+  day: 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Weekend';
+  session: SessionType;
+  tradesCount: number;
+  winsCount: number;
+  winRate: number;
+  netR: number;
+  expectancy: number;
+}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Experiment } from '../types/trade';
 import { calculateTradeStats } from '../utils/calculations';
 import { CodemLogo } from './CodemLogo';
-import { TrendingUp, Clock, Zap } from 'lucide-react';
+import { TrendingUp, Clock, Zap, FlaskConical } from 'lucide-react';
 
 interface VisualReportCardProps {
   experiment: Experiment;
@@ -112,8 +112,12 @@ export const VisualReportCard: React.FC<VisualReportCardProps> = ({
           >
             {experiment.id}
           </div>
-          <div className="text-xs text-slate-300 font-bold uppercase">
-            {experiment.type === 'backtest' ? '🧪 BACKTEST' : '⚡ LIVE TRADE'}
+          <div className="text-xs text-slate-300 font-bold uppercase flex items-center justify-end gap-1.5">
+            {experiment.type === 'backtest' ? (
+              <><FlaskConical className="w-3.5 h-3.5" /> BACKTEST</>
+            ) : (
+              <><Zap className="w-3.5 h-3.5" /> LIVE TRADE</>
+            )}
           </div>
         </div>
       </div>

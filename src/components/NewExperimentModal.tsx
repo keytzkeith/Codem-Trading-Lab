@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Experiment, SessionType, TimeframeType, TradeType, VerdictType, SingleTrade, TradeDirection, TradeResult } from '../types/trade';
 import { getNextUniqueExperimentId } from '../utils/idGenerator';
 import { calculateTradeStats } from '../utils/calculations';
-import { X, Plus, Sparkles, Trash2, Calendar, Target, HelpCircle, Layers, Sliders, CheckCircle2 } from 'lucide-react';
+import { ScreenshotPasteZone } from './ScreenshotPasteZone';
+import { X, Plus, Sparkles, Trash2, Calendar, Target, HelpCircle, Layers, Sliders, CheckCircle2, Zap, PenSquare, Wand2 } from 'lucide-react';
 
 interface NewExperimentModalProps {
   onClose: () => void;
@@ -29,7 +30,7 @@ export const NewExperimentModal: React.FC<NewExperimentModalProps> = ({
   const [keyFinding, setKeyFinding] = useState('Positive risk-to-reward ratio with strict session timing.');
   const [hypotheses, setHypotheses] = useState('Session liquidity grab produces high-probability expansion into opposing imbalance.');
   const [verdict, setVerdict] = useState<VerdictType>('KEEP_TESTING');
-  const [screenshotUrl, setScreenshotUrl] = useState('');
+  const [screenshots, setScreenshots] = useState<string[]>([]);
   const [tagsInput, setTagsInput] = useState('gold, liquidity-sweep, london');
 
   // Trade Entry Mode: 'manual' (real individual trades) vs 'simulated' (auto-generated sample)
@@ -207,7 +208,7 @@ export const NewExperimentModal: React.FC<NewExperimentModalProps> = ({
           : 'Backtest study initialized. Individual trades logged live.'),
       hypotheses: hypotheses.trim(),
       verdict,
-      screenshotUrls: screenshotUrl.trim() ? [screenshotUrl.trim()] : [],
+      screenshotUrls: screenshots,
       tags,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -250,20 +251,21 @@ export const NewExperimentModal: React.FC<NewExperimentModalProps> = ({
           {/* Study Type Switcher */}
           <div className="grid grid-cols-3 gap-2 font-mono">
             {[
-              { id: 'backtest', label: '🧪 Backtest' },
-              { id: 'live', label: '⚡ Live Trade' },
-              { id: 'forward_test', label: '🔭 Forward Test' },
+              { id: 'backtest', label: 'Backtest', icon: Sparkles },
+              { id: 'live', label: 'Live Trade', icon: Zap },
+              { id: 'forward_test', label: 'Forward Test', icon: Target },
             ].map((t) => (
               <button
                 key={t.id}
                 type="button"
                 onClick={() => handleTypeChange(t.id as TradeType)}
-                className={`py-2.5 px-3 rounded-xl font-bold border transition-all text-center text-xs sm:text-sm ${
+                className={`py-2.5 px-3 rounded-xl font-bold border transition-all text-center text-xs flex items-center justify-center gap-1.5 sm:text-sm ${
                   type === t.id
                     ? 'bg-[#1E2235] border-[#00FF66] text-[#00FF66] shadow-[0_0_10px_rgba(0,255,102,0.2)]'
                     : 'bg-[#181B28] border-slate-800 text-slate-400 hover:text-white'
                 }`}
               >
+                <t.icon className="w-3.5 h-3.5" />
                 {t.label}
               </button>
             ))}
@@ -363,24 +365,26 @@ export const NewExperimentModal: React.FC<NewExperimentModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setEntryMode('manual')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition-colors flex items-center gap-1.5 ${
                     entryMode === 'manual'
                       ? 'bg-[#00FF66] text-black shadow-[0_0_10px_rgba(0,255,102,0.3)]'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  ✍️ Manual Trades Log ({manualTrades.length})
+                  <PenSquare className="w-3.5 h-3.5" />
+                  Manual Trades Log ({manualTrades.length})
                 </button>
                 <button
                   type="button"
                   onClick={() => setEntryMode('simulated')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition-colors flex items-center gap-1.5 ${
                     entryMode === 'simulated'
                       ? 'bg-[#38bdf8] text-black shadow-[0_0_10px_rgba(56,189,248,0.3)]'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  🎲 Auto Simulation
+                  <Wand2 className="w-3.5 h-3.5" />
+                  Auto Simulation
                 </button>
               </div>
             </div>
@@ -644,6 +648,15 @@ export const NewExperimentModal: React.FC<NewExperimentModalProps> = ({
                 />
               </div>
             </div>
+          </div>
+
+          {/* Screenshot Evidence Paste Zone */}
+          <div className="pt-2">
+            <ScreenshotPasteZone
+              screenshots={screenshots}
+              onChange={setScreenshots}
+              label="Chart Screenshots & Setup Evidence (Optional)"
+            />
           </div>
 
           {/* Action Buttons */}

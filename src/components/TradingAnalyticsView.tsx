@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Experiment } from '../types/trade';
 import { calculateGlobalStats, calculateTradeStats } from '../utils/calculations';
+import { MonteCarloSimulator } from './MonteCarloSimulator';
+import { HeatmapBreakdown } from './HeatmapBreakdown';
 import {
   BarChart3,
   TrendingUp,
@@ -13,6 +15,8 @@ import {
   PieChart as PieIcon,
   Plus,
   FileSpreadsheet,
+  Calendar,
+  Activity,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -40,6 +44,7 @@ export const TradingAnalyticsView: React.FC<TradingAnalyticsViewProps> = ({
   onOpenNewExperiment,
   onOpenMt5Import,
 }) => {
+  const [activeTab, setActiveTab] = useState<'edge' | 'montecarlo' | 'heatmap'>('edge');
   const globalStats = calculateGlobalStats(experiments);
 
   // Group all trades by R buckets
@@ -143,143 +148,202 @@ export const TradingAnalyticsView: React.FC<TradingAnalyticsViewProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-2.5 mb-1">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00FF66]/10 text-[#00FF66] border border-[#00FF66]/30">
-            <span className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" />
-            Statistical Asymmetry Engine
-          </span>
-          <span className="text-xs font-semibold text-slate-400">
-            • {allTrades.length} Total Trade Executions
-          </span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          Quant Analytics & Edge Distribution
-        </h1>
-        <p className="text-sm text-slate-300 mt-1">
-          Statistical payoff distributions and strategy model leaderboards across {allTrades.length} tested trades.
-        </p>
-      </div>
-
-      {/* R-Multiple Distribution Histogram */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-[#12131D] border border-slate-800/80 shadow-xl">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[#00FF66]" />
-              R-Multiple Frequency Distribution ({allTrades.length} Samples)
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-              Asymmetry and payoff frequency across all completed executions
-            </p>
+      {/* Header & Sub-tabs */}
+      <div className="flex items-center justify-between flex-wrap gap-4 border-b border-slate-800 pb-5">
+        <div>
+          <div className="flex items-center gap-2.5 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase bg-[#00FF66]/10 text-[#00FF66] border border-[#00FF66]/30">
+              <span className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" />
+              Statistical Engine
+            </span>
+            <span className="text-xs font-semibold text-slate-400 font-mono">
+              • {allTrades.length} Total Trade Executions
+            </span>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Quant Analytics & Edge Distribution
+          </h1>
+          <p className="text-sm text-slate-300 mt-1 font-sans">
+            Payoff frequency, Monte Carlo ruin probabilities, and session liquidity breakdown.
+          </p>
         </div>
 
-        <div className="h-60 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={histogramData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1E2235" vertical={false} />
-              <XAxis dataKey="bucket" stroke="#64748B" tick={{ fontSize: 12, fill: '#94A3B8' }} />
-              <YAxis stroke="#64748B" tick={{ fontSize: 12, fill: '#94A3B8' }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#0F111A',
-                  borderColor: '#334155',
-                  borderRadius: '8px',
-                  color: '#F8FAFC',
-                  fontSize: '13px',
-                  fontWeight: 'bold',
-                }}
-                formatter={(val: any, name: string, item: any) => [
-                  `${val} executions (${item.payload.percentage}%)`,
-                  'Frequency',
-                ]}
-              />
-              <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                {histogramData.map((entry, index) => {
-                  let color = '#00FF66';
-                  if (entry.bucket.includes('Breakeven')) color = '#64748B';
-                  else if (entry.bucket.includes('-1.0R') || entry.bucket.includes('<-1.0R')) color = '#FF4D4D';
-                  return <Cell key={`cell-${index}`} fill={color} />;
-                })}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        {/* View Switcher Sub-Tabs */}
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#12131D] border border-slate-800 font-mono text-xs font-bold">
+          <button
+            onClick={() => setActiveTab('edge')}
+            className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition-all ${
+              activeTab === 'edge'
+                ? 'bg-[#1E2235] text-[#00FF66] border border-[#00FF66]/40 shadow-[0_0_10px_rgba(0,255,102,0.15)]'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span>Payoff & Leaderboard</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('montecarlo')}
+            className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition-all ${
+              activeTab === 'montecarlo'
+                ? 'bg-[#1E2235] text-[#00FF66] border border-[#00FF66]/40 shadow-[0_0_10px_rgba(0,255,102,0.15)]'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-[#00FF66]" />
+            <span>Monte Carlo & Prop Firm</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('heatmap')}
+            className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition-all ${
+              activeTab === 'heatmap'
+                ? 'bg-[#1E2235] text-[#00FF66] border border-[#00FF66]/40 shadow-[0_0_10px_rgba(0,255,102,0.15)]'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Liquidity Heatmap</span>
+          </button>
         </div>
       </div>
 
-      {/* Setup Model Performance Matrix Table */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-[#12131D] border border-slate-800/80 space-y-4 shadow-xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
-              <Zap className="w-5 h-5 text-[#00FF66]" />
-              Strategy Model Performance Leaderboard
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-              Ranked by total net R accumulated across sample backtests
-            </p>
-          </div>
-        </div>
+      {/* VIEW 1: PAYOFF & LEADERBOARD */}
+      {activeTab === 'edge' && (
+        <div className="space-y-6">
+          {/* R-Multiple Distribution Histogram */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-[#12131D] border border-slate-800/80 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-[#00FF66]" />
+                  R-Multiple Frequency Distribution ({allTrades.length} Samples)
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                  Asymmetry and payoff frequency across all completed executions
+                </p>
+              </div>
+            </div>
 
-        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-[#0B0C12]">
-          <table className="w-full text-left text-xs sm:text-sm border-collapse">
-            <thead className="bg-[#181B28] text-slate-400 uppercase text-xs border-b border-slate-800 font-bold">
-              <tr>
-                <th className="px-5 py-3.5">Rank</th>
-                <th className="px-5 py-3.5">ID</th>
-                <th className="px-5 py-3.5">Setup Model</th>
-                <th className="px-5 py-3.5">Asset</th>
-                <th className="px-5 py-3.5">Sample</th>
-                <th className="px-5 py-3.5">Win Rate</th>
-                <th className="px-5 py-3.5">Avg RR</th>
-                <th className="px-5 py-3.5">Expectancy</th>
-                <th className="px-5 py-3.5">Net Yield</th>
-                <th className="px-5 py-3.5">Verdict</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800 text-slate-200">
-              {setupRankings.map((row, idx) => (
-                <tr
-                  key={row.experiment.id}
-                  onClick={() => onSelectExperiment(row.experiment)}
-                  className="hover:bg-[#181B28]/70 transition-colors cursor-pointer"
-                >
-                  <td className="px-5 py-4 font-bold text-slate-400">#{idx + 1}</td>
-                  <td className="px-5 py-4 font-bold text-white text-sm">{row.experiment.id}</td>
-                  <td className="px-5 py-4 font-semibold text-white max-w-xs truncate">{row.setup}</td>
-                  <td className="px-5 py-4 text-[#00FF66] font-bold">{row.pair}</td>
-                  <td className="px-5 py-4 font-bold">{row.trades}</td>
-                  <td className="px-5 py-4 font-extrabold text-[#00FF66] text-sm">{row.winRate}%</td>
-                  <td className="px-5 py-4 text-white font-bold">{row.avgRR}R</td>
-                  <td className="px-5 py-4 text-[#00FF66] font-extrabold">
-                    {row.expectancy >= 0 ? '+' : ''}{row.expectancy}R
-                  </td>
-                  <td className={`px-5 py-4 font-extrabold text-sm ${row.netR >= 0 ? 'text-[#00FF66]' : 'text-rose-400'}`}>
-                    {row.netR >= 0 ? '+' : ''}{row.netR}R
-                  </td>
-                  <td className="px-5 py-4">
-                    <span
-                      className={`text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${
-                        row.verdict === 'KEEP'
-                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
-                          : row.verdict === 'KEEP_TESTING'
-                          ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
-                          : row.verdict === 'DISCARD'
-                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/40'
-                          : 'bg-slate-800 text-slate-300 border-slate-700'
-                      }`}
+            <div className="h-60 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={histogramData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1E2235" vertical={false} />
+                  <XAxis dataKey="bucket" stroke="#64748B" tick={{ fontSize: 12, fill: '#94A3B8' }} />
+                  <YAxis stroke="#64748B" tick={{ fontSize: 12, fill: '#94A3B8' }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#0F111A',
+                      borderColor: '#334155',
+                      borderRadius: '8px',
+                      color: '#F8FAFC',
+                      fontSize: '13px',
+                      fontWeight: 'bold',
+                    }}
+                    formatter={(val: any, name: string, item: any) => [
+                      `${val} executions (${item.payload.percentage}%)`,
+                      'Frequency',
+                    ]}
+                  />
+                  <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                    {histogramData.map((entry, index) => {
+                      let color = '#00FF66';
+                      if (entry.bucket.includes('Breakeven')) color = '#64748B';
+                      else if (entry.bucket.includes('-1.0R') || entry.bucket.includes('<-1.0R')) color = '#FF4D4D';
+                      return <Cell key={`cell-${index}`} fill={color} />;
+                    })}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Setup Model Performance Matrix Table */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-[#12131D] border border-slate-800/80 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-[#00FF66]" />
+                  Strategy Model Performance Leaderboard
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                  Ranked by total net R accumulated across sample backtests
+                </p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-[#0B0C12]">
+              <table className="w-full text-left text-xs sm:text-sm border-collapse">
+                <thead className="bg-[#181B28] text-slate-400 uppercase text-xs border-b border-slate-800 font-bold">
+                  <tr>
+                    <th className="px-5 py-3.5">Rank</th>
+                    <th className="px-5 py-3.5">ID</th>
+                    <th className="px-5 py-3.5">Setup Model</th>
+                    <th className="px-5 py-3.5">Asset</th>
+                    <th className="px-5 py-3.5">Sample</th>
+                    <th className="px-5 py-3.5">Win Rate</th>
+                    <th className="px-5 py-3.5">Avg RR</th>
+                    <th className="px-5 py-3.5">Expectancy</th>
+                    <th className="px-5 py-3.5">Net Yield</th>
+                    <th className="px-5 py-3.5">Verdict</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800 text-slate-200">
+                  {setupRankings.map((row, idx) => (
+                    <tr
+                      key={row.experiment.id}
+                      onClick={() => onSelectExperiment(row.experiment)}
+                      className="hover:bg-[#181B28]/70 transition-colors cursor-pointer"
                     >
-                      {row.verdict.replace('_', ' ')}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <td className="px-5 py-4 font-bold text-slate-400">#{idx + 1}</td>
+                      <td className="px-5 py-4 font-bold text-white text-sm">{row.experiment.id}</td>
+                      <td className="px-5 py-4 font-semibold text-white max-w-xs truncate">{row.setup}</td>
+                      <td className="px-5 py-4 text-[#00FF66] font-bold">{row.pair}</td>
+                      <td className="px-5 py-4 font-bold">{row.trades}</td>
+                      <td className="px-5 py-4 font-extrabold text-[#00FF66] text-sm">{row.winRate}%</td>
+                      <td className="px-5 py-4 text-white font-bold">{row.avgRR}R</td>
+                      <td className="px-5 py-4 text-[#00FF66] font-extrabold">
+                        {row.expectancy >= 0 ? '+' : ''}{row.expectancy}R
+                      </td>
+                      <td className={`px-5 py-4 font-extrabold text-sm ${row.netR >= 0 ? 'text-[#00FF66]' : 'text-rose-400'}`}>
+                        {row.netR >= 0 ? '+' : ''}{row.netR}R
+                      </td>
+                      <td className="px-5 py-4">
+                        <span
+                          className={`text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${
+                            row.verdict === 'KEEP'
+                              ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
+                              : row.verdict === 'KEEP_TESTING'
+                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                              : row.verdict === 'DISCARD'
+                              ? 'bg-rose-500/15 text-rose-400 border-rose-500/40'
+                              : 'bg-slate-800 text-slate-300 border-slate-700'
+                          }`}
+                        >
+                          {row.verdict.replace('_', ' ')}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* VIEW 2: MONTE CARLO PROBABILISTIC SIMULATOR */}
+      {activeTab === 'montecarlo' && (
+        <MonteCarloSimulator
+          trades={allTrades}
+          title="Monte Carlo Prop Firm & Ruin Simulator"
+          subtitle={`Running 1,000 randomized resamplings across all ${allTrades.length} empirical trades in your database.`}
+        />
+      )}
+
+      {/* VIEW 3: TEMPORAL LIQUIDITY HEATMAP */}
+      {activeTab === 'heatmap' && (
+        <HeatmapBreakdown experiments={experiments} />
+      )}
     </div>
   );
 };
+

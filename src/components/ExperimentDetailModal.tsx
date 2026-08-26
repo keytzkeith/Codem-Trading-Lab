@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Experiment, SingleTrade, VerdictType, SessionType, TradeDirection, TradeResult } from '../types/trade';
 import { calculateTradeStats } from '../utils/calculations';
+import { MonteCarloSimulator } from './MonteCarloSimulator';
+import { ScreenshotPasteZone } from './ScreenshotPasteZone';
 import {
   X,
   Share2,
@@ -20,6 +22,10 @@ import {
   Trash2,
   Zap,
   Check,
+  BarChart3,
+  List,
+  Dices,
+  BrainCircuit,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -44,14 +50,13 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
   onUpdate,
   onOpenWhatsAppShare,
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'trades' | 'findings' | 'screenshots'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'trades' | 'montecarlo' | 'findings' | 'screenshots'>('overview');
   const [isEditingFinding, setIsEditingFinding] = useState(false);
   const [editedFinding, setEditedFinding] = useState(experiment.keyFinding);
   const [editedHypothesis, setEditedHypothesis] = useState(experiment.hypotheses || '');
   const [selectedVerdict, setSelectedVerdict] = useState<VerdictType>(experiment.verdict);
   const [verdictNotes, setVerdictNotes] = useState(experiment.verdictNotes || '');
   const [tradeFilter, setTradeFilter] = useState<'ALL' | 'WIN' | 'LOSS' | 'BE'>('ALL');
-  const [newScreenshotUrl, setNewScreenshotUrl] = useState('');
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   // Trade management states
@@ -208,19 +213,7 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
     setIsEditingFinding(false);
   };
 
-  const handleAddScreenshot = () => {
-    if (!newScreenshotUrl.trim()) return;
-    const updated: Experiment = {
-      ...experiment,
-      screenshotUrls: [...experiment.screenshotUrls, newScreenshotUrl.trim()],
-      updatedAt: new Date().toISOString(),
-    };
-    onUpdate(updated);
-    setNewScreenshotUrl('');
-  };
-
-  const handleRemoveScreenshot = (index: number) => {
-    const updatedUrls = experiment.screenshotUrls.filter((_, i) => i !== index);
+  const handleUpdateScreenshots = (updatedUrls: string[]) => {
     const updated: Experiment = {
       ...experiment,
       screenshotUrls: updatedUrls,
@@ -296,22 +289,24 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
         </div>
 
         {/* Navigation Tabs */}
-        <div className="px-6 border-b border-slate-800 bg-[#141522] flex items-center gap-2 overflow-x-auto font-mono">
+        <div className="px-6 border-b border-slate-800 bg-[#141522] flex items-center gap-2 overflow-x-auto font-mono no-scrollbar py-[15px]">
           {[
-            { id: 'overview', label: '📊 Statistics & Equity' },
-            { id: 'trades', label: `📋 Trade Log (${experiment.trades.length})` },
-            { id: 'findings', label: '🧠 Findings & Verdict' },
-            { id: 'screenshots', label: `🖼️ Screenshots (${experiment.screenshotUrls.length})` },
+            { id: 'overview', label: 'Statistics & Equity', icon: BarChart3 },
+            { id: 'trades', label: `Trade Log (${experiment.trades.length})`, icon: List },
+            { id: 'montecarlo', label: 'Monte Carlo Risk', icon: Dices },
+            { id: 'findings', label: 'Findings & Verdict', icon: BrainCircuit },
+            { id: 'screenshots', label: `Screenshots (${experiment.screenshotUrls.length})`, icon: ImageIcon },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`py-3 px-4 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap transition-colors ${
+              className={`py-3 px-4 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${
                 activeTab === tab.id
                   ? 'border-[#00FF66] text-[#00FF66]'
                   : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
+              <tab.icon className="w-4 h-4" />
               {tab.label}
             </button>
           ))}
@@ -883,50 +878,23 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
             </div>
           )}
 
-          {/* TAB 4: SCREENSHOTS */}
-          {activeTab === 'screenshots' && (
-            <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-[#181B28] border border-slate-800 flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Paste Image URL (TradingView or chart capture)..."
-                  value={newScreenshotUrl}
-                  onChange={(e) => setNewScreenshotUrl(e.target.value)}
-                  className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#12131D] border border-slate-700 text-sm text-white font-sans focus:outline-none focus:border-[#00FF66]"
-                />
-                <button
-                  onClick={handleAddScreenshot}
-                  className="px-4 py-2.5 rounded-xl bg-[#00FF66] hover:bg-[#00E05A] text-black font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5"
-                >
-                  <Plus className="w-4 h-4 stroke-[3]" />
-                  <span>Add</span>
-                </button>
-              </div>
+          {/* TAB 3: MONTE CARLO RISK & PROBABILITY */}
+          {activeTab === 'montecarlo' && (
+            <MonteCarloSimulator
+              trades={experiment.trades}
+              title={`Monte Carlo Simulation • ${experiment.setupModel}`}
+              subtitle={`Simulating 1,000 challenge runs on ${experiment.trades.length} historical trades recorded for ${experiment.pair}.`}
+            />
+          )}
 
-              {experiment.screenshotUrls.length === 0 ? (
-                <div className="p-8 rounded-2xl bg-[#0B0C12] border border-slate-800 text-center text-slate-400 text-xs font-mono">
-                  No screenshots attached to this experiment.
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {experiment.screenshotUrls.map((url, idx) => (
-                    <div key={idx} className="relative group rounded-2xl overflow-hidden border border-slate-800 bg-[#0B0C12]">
-                      <img
-                        src={url}
-                        alt={`Screenshot ${idx + 1}`}
-                        className="w-full h-40 object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => setZoomedImage(url)}
-                      />
-                      <button
-                        onClick={() => handleRemoveScreenshot(idx)}
-                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/70 text-rose-400 hover:text-white hover:bg-rose-600 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+          {/* TAB 5: SCREENSHOTS */}
+          {activeTab === 'screenshots' && (
+            <div className="p-2">
+              <ScreenshotPasteZone
+                screenshots={experiment.screenshotUrls}
+                onChange={handleUpdateScreenshots}
+                label={`Visual Evidence for ${experiment.setupModel}`}
+              />
             </div>
           )}
         </div>

@@ -1,4 +1,4 @@
-import { CalculatedStats, SingleTrade, Experiment } from '../types/trade';
+import { CalculatedStats, SingleTrade, Experiment, MonteCarloConfig, MonteCarloSimulationResult } from '../types/trade';
 
 export function calculateTradeStats(trades: SingleTrade[]): CalculatedStats {
   if (!trades || trades.length === 0) {
@@ -193,5 +193,252 @@ export function calculateGlobalStats(experiments: Experiment[]) {
     pairStats,
     sessionStats,
     setupStats,
+  };
+}
+
+export function runMonteCarloSimulation(
+  trades: SingleTrade[],
+  configInput?: Partial<MonteCarloConfig>
+): MonteCarloSimulationResult {
+  const config: MonteCarloConfig = {
+    simulationsCount: configInput?.simulationsCount || 1000,
+    tradesPerRun: configInput?.tradesPerRun || 50,
+    profitTargetR: configInput?.profitTargetR || 10,
+    maxDrawdownR: configInput?.maxDrawdownR || 8,
+    riskPercent: configInput?.riskPercent || 1.0,
+  };
+
+  const tradeReturns = trades.map((t) => t.realizedRR);
+  const samplePool = tradeReturns.length > 0 ? tradeReturns : [2.0, -1.0, 2.0, -1.0, 0.0, 2.5, -1.0];
+
+  let passCount = 0;
+  let ruinCount = 0;
+  let neitherCount = 0;
+
+  const finalReturns: number[] = [];
+  const maxDrawdowns: number[] = [];
+  // Matrix of [simIndex][tradeIndex] = cumulative R
+  const allPaths: number[][] = [];
+
+  for (let sim = 0; sim < config.simulationsCount; sim++) {
+    let cumR = 0;
+    let peakR = 0;
+    let maxDD = 0;
+    let passed = false;
+    let ruined = false;
+
+    const path: number[] = [0];
+
+    for (let step = 1; step <= config.tradesPerRun; step++) {
+      const randomIndex = Math.floor(Math.random() * samplePool.length);
+      const sampledR = samplePool[randomIndex];
+      cumR += sampledR;
+
+      if (cumR > peakR) {
+        peakR = cumR;
+      }
+      const dd = peakR - cumR;
+      if (dd > maxDD) {
+        maxDD = dd;
+      }
+
+      if (!passed && !ruined) {
+        if (cumR >= config.profitTargetR) {
+          passed = true;
+        } else if (dd >= config.maxDrawdownR) {
+          ruined = true;
+        }
+      }
+
+      path.push(Number(cumR.toFixed(2)));
+    }
+
+    if (passed) passCount++;
+    else if (ruined) ruinCount++;
+    else neitherCount++;
+
+    finalReturns.push(cumR);
+    maxDrawdowns.push(maxDD);
+    allPaths.push(path);
+  }
+
+  finalReturns.sort((a, b) => a - b);
+  maxDrawdowns.sort((a, b) => a - b);
+
+  const getPercentile = (sortedArr: number[], p: number) => {
+    const idx = Math.min(Math.floor((p / 100) * sortedArr.length), sortedArr.length - 1);
+    return sortedArr[idx];
+  };
+
+  const medianFinalR = Number(getPercentile(finalReturns, 50).toFixed(1));
+  const top95FinalR = Number(getPercentile(finalReturns, 95).toFixed(1));
+  const bottom5FinalR = Number(getPercentile(finalReturns, 5).toFixed(1));
+
+  const medianMaxDrawdown = Number(getPercentile(maxDrawdowns, 50).toFixed(1));
+  const worstMaxDrawdown = Number(getPercentile(maxDrawdowns, 95).toFixed(1));
+
+  // Compute fan chart percentiles for each trade index 0..tradesPerRun
+  const fanChartData: MonteCarloSimulationResult['fanChartData'] = [];
+  for (let step = 0; step <= config.tradesPerRun; step++) {
+    const valuesAtStep = allPaths.map((p) => p[step]).sort((a, b) => a - b);
+    fanChartData.push({
+      tradeIndex: step,
+      p95: Number(getPercentile(valuesAtStep, 95).toFixed(2)),
+      median: Number(getPercentile(valuesAtStep, 50).toFixed(2)),
+      p5: Number(getPercentile(valuesAtStep, 5).toFixed(2)),
+      path1: allPaths[0] ? allPaths[0][step] : undefined,
+      path2: allPaths[1] ? allPaths[1][step] : undefined,
+      path3: allPaths[2] ? allPaths[2][step] : undefined,
+    });
+  }
+
+  const passProbability = Number(((passCount / config.simulationsCount) * 100).toFixed(1));
+  const ruinProbability = Number(((ruinCount / config.simulationsCount) * 100).toFixed(1));
+  const neitherProbability = Number(((neitherCount / config.simulationsCount) * 100).toFixed(1));
+
+  return {
+    simulationsCount: config.simulationsCount,
+    tradesPerRun: config.tradesPerRun,
+    profitTargetR: config.profitTargetR,
+    maxDrawdownR: config.maxDrawdownR,
+    riskPercent: config.riskPercent,
+    passCount,
+    passProbability,
+    ruinCount,
+    ruinProbability,
+    neitherCount,
+    neitherProbability,
+    medianFinalR,
+    top95FinalR,
+    bottom5FinalR,
+    medianMaxDrawdown,
+    worstMaxDrawdown,
+    fanChartData,
+  };
+}
+
+export function calculateSessionDayHeatmap(trades: SingleTrade[]) {
+  const days: ('Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri')[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  const sessions: SingleTrade['session'][] = [
+    'London',
+    'New York Open',
+    'New York PM',
+    'Asian',
+    'London/NY Overlap',
+  ];
+
+  const matrix: Record<string, { trades: number; wins: number; totalWinR: number; totalLossR: number; netR: number }> = {};
+  const dayStats: Record<string, { trades: number; wins: number; totalWinR: number; totalLossR: number; netR: number }> = {};
+  const sessionStats: Record<string, { trades: number; wins: number; totalWinR: number; totalLossR: number; netR: number }> = {};
+
+  // Initialize keys
+  days.forEach((d) => {
+    dayStats[d] = { trades: 0, wins: 0, totalWinR: 0, totalLossR: 0, netR: 0 };
+    sessions.forEach((s) => {
+      matrix[`${d}_${s}`] = { trades: 0, wins: 0, totalWinR: 0, totalLossR: 0, netR: 0 };
+    });
+  });
+
+  sessions.forEach((s) => {
+    sessionStats[s] = { trades: 0, wins: 0, totalWinR: 0, totalLossR: 0, netR: 0 };
+  });
+
+  trades.forEach((t) => {
+    let dayKey: 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Weekend' = 'Wed';
+    if (t.date) {
+      try {
+        const dObj = new Date(t.date.includes('T') ? t.date : `${t.date}T12:00:00Z`);
+        const dayNum = dObj.getUTCDay();
+        if (dayNum === 1) dayKey = 'Mon';
+        else if (dayNum === 2) dayKey = 'Tue';
+        else if (dayNum === 3) dayKey = 'Wed';
+        else if (dayNum === 4) dayKey = 'Thu';
+        else if (dayNum === 5) dayKey = 'Fri';
+        else dayKey = 'Weekend';
+      } catch (e) {
+        dayKey = 'Wed';
+      }
+    }
+
+    const sess = t.session || 'London';
+    const r = t.realizedRR;
+
+    if (dayKey !== 'Weekend') {
+      const cellKey = `${dayKey}_${sess}`;
+      if (matrix[cellKey]) {
+        matrix[cellKey].trades++;
+        matrix[cellKey].netR += r;
+        if (r > 0) {
+          matrix[cellKey].wins++;
+          matrix[cellKey].totalWinR += r;
+        } else if (r < 0) {
+          matrix[cellKey].totalLossR += Math.abs(r);
+        }
+      }
+
+      if (dayStats[dayKey]) {
+        dayStats[dayKey].trades++;
+        dayStats[dayKey].netR += r;
+        if (r > 0) {
+          dayStats[dayKey].wins++;
+          dayStats[dayKey].totalWinR += r;
+        } else if (r < 0) {
+          dayStats[dayKey].totalLossR += Math.abs(r);
+        }
+      }
+    }
+
+    if (sessionStats[sess]) {
+      sessionStats[sess].trades++;
+      sessionStats[sess].netR += r;
+      if (r > 0) {
+        sessionStats[sess].wins++;
+        sessionStats[sess].totalWinR += r;
+      } else if (r < 0) {
+        sessionStats[sess].totalLossR += Math.abs(r);
+      }
+    }
+  });
+
+  const cells = days.flatMap((day) => {
+    return sessions.map((session) => {
+      const cell = matrix[`${day}_${session}`] || { trades: 0, wins: 0, totalWinR: 0, totalLossR: 0, netR: 0 };
+      const winRate = cell.trades > 0 ? Number(((cell.wins / cell.trades) * 100).toFixed(1)) : 0;
+      const lossCount = cell.trades - cell.wins;
+      const avgWin = cell.wins > 0 ? cell.totalWinR / cell.wins : 0;
+      const avgLoss = lossCount > 0 ? cell.totalLossR / lossCount : 1;
+      const exp = cell.trades > 0 ? (winRate / 100) * avgWin - ((100 - winRate) / 100) * avgLoss : 0;
+
+      return {
+        day,
+        session,
+        tradesCount: cell.trades,
+        winsCount: cell.wins,
+        winRate,
+        netR: Number(cell.netR.toFixed(1)),
+        expectancy: Number(exp.toFixed(2)),
+      };
+    });
+  });
+
+  // Calculate high/low takeaways
+  let bestCell = cells[0];
+  let worstCell = cells[0];
+
+  cells.forEach((c) => {
+    if (c.tradesCount > 0) {
+      if (c.netR > bestCell.netR) bestCell = c;
+      if (c.netR < worstCell.netR) worstCell = c;
+    }
+  });
+
+  return {
+    cells,
+    days,
+    sessions,
+    dayStats,
+    sessionStats,
+    bestCell,
+    worstCell,
   };
 }

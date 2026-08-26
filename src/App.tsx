@@ -196,7 +196,7 @@ function TradingAppInner() {
     const sanitized = deduplicateExperiments([newExp, ...experiments]);
     setExperiments(sanitized);
     setShowNewModal(false);
-    showToast(`✅ Saved ${newExp.id} to Workspace!`);
+    showToast(`Saved ${newExp.id} to Workspace!`);
     confetti({
       particleCount: 40,
       spread: 60,
@@ -221,7 +221,7 @@ function TradingAppInner() {
     const sanitized = deduplicateExperiments([newExp, ...experiments]);
     setExperiments(sanitized);
     setShowMt5Modal(false);
-    showToast(`📊 Saved ${newExp.trades.length} trades (${newExp.id})!`);
+    showToast(`Saved ${newExp.trades.length} trades (${newExp.id})!`);
     confetti({
       particleCount: 50,
       spread: 70,
@@ -273,7 +273,7 @@ function TradingAppInner() {
         setExperiments((prev) => prev.filter((e) => e.id !== id));
         if (detailExp?.id === id) setDetailExp(null);
         if (shareExp?.id === id) setShareExp(null);
-        showToast(`🗑️ Deleted experiment ${id}`);
+        showToast(`Deleted experiment ${id}`);
 
         if (user) {
           try {
@@ -302,7 +302,7 @@ function TradingAppInner() {
         const demo = deduplicateExperiments(INITIAL_EXPERIMENTS);
         setExperiments(demo);
         setWhatsappGroups(DEFAULT_WHATSAPP_GROUPS);
-        showToast('🔄 Workspace reset to initial demo datasets.');
+        showToast('Workspace reset to initial demo datasets.');
 
         if (user) {
           try {
@@ -337,7 +337,7 @@ function TradingAppInner() {
         } catch (e) {
           console.error(e);
         }
-        showToast('🗑️ Database wiped clean. Ready for real trading data!');
+        showToast('Database wiped clean. Ready for real trading data!');
 
         if (user) {
           try {
@@ -605,7 +605,7 @@ function TradingAppInner() {
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        onSuccess={() => showToast('🎉 Connected to Firebase Firestore!')}
+        onSuccess={() => showToast('Connected to Firebase Firestore!')}
       />
 
       {/* Toast Notification Banner */}
