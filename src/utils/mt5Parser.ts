@@ -1,17 +1,19 @@
 import { SingleTrade, SessionType, TradeDirection, TradeResult } from '../types/trade';
+import { isFxReplayFormat, parseFxReplayCsv, determineSessionFromTimestamp } from './fxReplayParser';
 
-function guessSessionFromTime(dateStr: string): SessionType {
-  const date = new Date(dateStr);
-  if (isNaN(date.getTime())) return 'London';
-  const hourUtc = date.getUTCHours();
-  if (hourUtc >= 7 && hourUtc < 12) return 'London';
-  if (hourUtc >= 12 && hourUtc < 16) return 'London/NY Overlap';
-  if (hourUtc >= 16 && hourUtc < 21) return 'New York PM';
-  if (hourUtc >= 0 && hourUtc < 7) return 'Asian';
-  return 'London';
-}
+export { isFxReplayFormat, parseFxReplayCsv, determineSessionFromTimestamp };
 
-export function parseMt5OrCsvText(rawText: string, defaultPair: string = 'EURUSD', defaultSession: SessionType = 'London'): SingleTrade[] {
+export function parseMt5OrCsvText(
+  rawText: string,
+  defaultPair: string = 'EURUSD',
+  defaultSession: SessionType | 'auto' = 'auto',
+  timezoneOffsetHours: number = 3
+): SingleTrade[] {
+  // If text is FX Replay format, use dedicated FX Replay parser
+  if (isFxReplayFormat(rawText)) {
+    return parseFxReplayCsv(rawText, defaultPair, defaultSession, timezoneOffsetHours).trades;
+  }
+
   const lines = rawText.trim().split('\n').map((l) => l.trim()).filter((l) => l.length > 0);
   if (lines.length === 0) return [];
 
@@ -35,7 +37,7 @@ export function parseMt5OrCsvText(rawText: string, defaultPair: string = 'EURUSD
     let tradeNum = index + 1;
     let date = new Date().toISOString().split('T')[0];
     let pair = defaultPair;
-    let session = defaultSession;
+    let session: SessionType = defaultSession === 'auto' ? 'London' : defaultSession;
     let direction: TradeDirection = 'Long';
     let entryPrice: number | undefined = undefined;
     let stopLoss: number | undefined = undefined;
@@ -85,11 +87,19 @@ export function parseMt5OrCsvText(rawText: string, defaultPair: string = 'EURUSD
       }
     }
 
-    // Check for date
+    // Check for date and timestamp
+    const fullTimeMatch = line.match(/(\d{4}[-/.]\d{2}[-/.]\d{2})[ T](\d{1,2}:\d{2}(?::\d{2})?)/);
     const dateMatch = line.match(/(\d{4}[-/.]\d{2}[-/.]\d{2})|(\d{2}[-/.]\d{2}[-/.]\d{4})/);
-    if (dateMatch) {
-      date = dateMatch[0];
-      session = guessSessionFromTime(dateMatch[0]);
+    if (fullTimeMatch) {
+      date = fullTimeMatch[1].replace(/\//g, '-');
+      if (defaultSession === 'auto' || defaultSession === 'All Sessions') {
+        session = determineSessionFromTimestamp(`${fullTimeMatch[1]} ${fullTimeMatch[2]}`, timezoneOffsetHours);
+      }
+    } else if (dateMatch) {
+      date = dateMatch[0].replace(/\//g, '-');
+      if (defaultSession === 'auto' || defaultSession === 'All Sessions') {
+        session = determineSessionFromTimestamp(line, timezoneOffsetHours);
+      }
     }
 
     // Determine result

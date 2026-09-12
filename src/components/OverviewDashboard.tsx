@@ -107,7 +107,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
             className="px-4 py-2.5 bg-[#171926] hover:bg-[#1E2132] text-slate-200 hover:text-white text-sm font-bold rounded-xl border border-slate-700 transition-colors flex items-center gap-2"
           >
             <FileSpreadsheet className="w-4 h-4 text-[#00FF66]" />
-            <span>MT5 Sync</span>
+            <span>Import Backtest</span>
           </button>
         </div>
       </div>
@@ -488,14 +488,14 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
                     <FileSpreadsheet className="w-5 h-5" />
                   </div>
                   <h5 className="font-bold text-white text-base group-hover:text-sky-400 transition-colors">
-                    MT5 / CSV Importer
+                    FX Replay / MT5 / CSV Importer
                   </h5>
                   <p className="text-xs text-slate-400 mt-1">
-                    Import trades automatically from MetaTrader 5 or TradeTally exports.
+                    Import backtests directly from FX Replay or execution statements from MetaTrader 5.
                   </p>
                 </div>
                 <div className="mt-4 text-xs font-bold text-sky-400 flex items-center gap-1">
-                  <span>Upload Statement</span>
+                  <span>Import Data</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </div>
               </div>

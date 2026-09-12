@@ -242,7 +242,7 @@ export const ExperimentsList: React.FC<ExperimentsListProps> = ({
                 className="px-5 py-2.5 bg-[#171926] hover:bg-[#1E2132] text-slate-200 hover:text-white text-sm font-bold rounded-xl border border-slate-700 flex items-center gap-2 transition-colors"
               >
                 <FileSpreadsheet className="w-4 h-4 text-sky-400" />
-                <span>Import MT5 CSV</span>
+                <span>Import FX Replay / MT5</span>
               </button>
             )}
             {experiments.length === 0 && onResetData && (

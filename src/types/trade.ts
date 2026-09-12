@@ -2,7 +2,7 @@ export type TradeType = 'backtest' | 'live' | 'forward_test';
 
 export type VerdictType = 'KEEP' | 'KEEP_TESTING' | 'DISCARD' | 'MODIFY_PARAMS';
 
-export type SessionType = 'London' | 'New York Open' | 'New York PM' | 'Asian' | 'London/NY Overlap';
+export type SessionType = 'London' | 'New York Open' | 'New York PM' | 'Asian' | 'London/NY Overlap' | 'All Sessions';
 
 export type TimeframeType = 'M1' | 'M5' | 'M15' | 'M30' | 'H1' | 'H4' | 'D1';
 

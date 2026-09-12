@@ -133,10 +133,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onOpenMt5Import}
               className="px-3 sm:px-3.5 py-2 bg-[#171926] hover:bg-[#1E2132] text-slate-200 hover:text-white text-xs sm:text-sm font-semibold rounded-xl border border-slate-750 flex items-center gap-1.5 sm:gap-2 transition-colors shrink-0"
-              title="Import MT5 / TradeTally CSV"
+              title="Import FX Replay / MT4/MT5 / CSV Backtest"
             >
               <FileSpreadsheet className="w-4 h-4 text-[#00FF66]" />
-              <span className="hidden md:inline">MT5 Sync</span>
+              <span className="hidden md:inline">Import Backtest</span>
             </button>
 
             {/* Settings & Database Management Dropdown */}

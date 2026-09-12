@@ -23,6 +23,7 @@ import {
   FlaskConical,
   Microscope,
   Zap,
+  FileSpreadsheet,
   ClipboardList
 } from 'lucide-react';
 
@@ -99,8 +100,8 @@ export const WhatsAppHubView: React.FC<WhatsAppHubViewProps> = ({
                 onClick={onOpenMt5Import}
                 className="px-5 py-2.5 bg-[#171926] hover:bg-[#1E2132] text-slate-200 hover:text-white text-sm font-bold rounded-xl border border-slate-700 flex items-center gap-2 transition-colors"
               >
-                <Plus className="w-4 h-4 text-[#00FF66]" />
-                <span>Import MT5 / CSV</span>
+                <FileSpreadsheet className="w-4 h-4 text-[#00FF66]" />
+                <span>Import FX Replay / MT5</span>
               </button>
             )}
           </div>
