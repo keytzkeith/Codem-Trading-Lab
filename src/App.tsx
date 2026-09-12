@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Experiment } from './types/trade';
-import { INITIAL_EXPERIMENTS, STORAGE_KEY, WHATSAPP_GROUPS_KEY, DEFAULT_WHATSAPP_GROUPS } from './data/initialData';
+import { INITIAL_EXPERIMENTS, DEMO_EXPERIMENTS, STORAGE_KEY, WHATSAPP_GROUPS_KEY, DEFAULT_WHATSAPP_GROUPS } from './data/initialData';
 import { deduplicateExperiments } from './utils/idGenerator';
 import { Navbar } from './components/Navbar';
 import { OverviewDashboard } from './components/OverviewDashboard';
@@ -40,13 +40,19 @@ function TradingAppInner() {
       if (saved !== null) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          return deduplicateExperiments(parsed);
+          const demoIds = new Set(['BT-028', 'BT-014', 'BT-022', 'BT-009', 'BT-031', 'BT-005', 'LT-007']);
+          const userStudies = parsed.filter((p) => !demoIds.has(p.id));
+          if (userStudies.length === 0) {
+            localStorage.removeItem(STORAGE_KEY);
+            return [];
+          }
+          return deduplicateExperiments(userStudies);
         }
       }
     } catch (e) {
       console.error('Failed to load experiments from localStorage', e);
     }
-    return deduplicateExperiments(INITIAL_EXPERIMENTS);
+    return [];
   });
 
   // Load WhatsApp groups
@@ -299,7 +305,7 @@ function TradingAppInner() {
       confirmLabel: 'Reload Demo Studies',
       confirmVariant: 'warning',
       action: async () => {
-        const demo = deduplicateExperiments(INITIAL_EXPERIMENTS);
+        const demo = deduplicateExperiments(DEMO_EXPERIMENTS);
         setExperiments(demo);
         setWhatsappGroups(DEFAULT_WHATSAPP_GROUPS);
         showToast('Workspace reset to initial demo datasets.');

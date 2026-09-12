@@ -245,15 +245,6 @@ export const ExperimentsList: React.FC<ExperimentsListProps> = ({
                 <span>Import FX Replay / MT5</span>
               </button>
             )}
-            {experiments.length === 0 && onResetData && (
-              <button
-                onClick={onResetData}
-                className="px-5 py-2.5 bg-[#171926] hover:bg-[#1E2132] text-amber-400 hover:text-amber-300 text-sm font-bold rounded-xl border border-amber-500/30 flex items-center gap-2 transition-colors"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Load Demo Studies</span>
-              </button>
-            )}
           </div>
         </div>
       ) : viewMode === 'grid' ? (

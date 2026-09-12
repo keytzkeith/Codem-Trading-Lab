@@ -59,7 +59,9 @@ function generateSimulatedTrades(
   return trades;
 }
 
-export const INITIAL_EXPERIMENTS: Experiment[] = [
+export const INITIAL_EXPERIMENTS: Experiment[] = [];
+
+export const DEMO_EXPERIMENTS: Experiment[] = [
   {
     id: 'BT-028',
     title: 'EURUSD M5 London Sweep + Displacement Model',

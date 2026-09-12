@@ -50,7 +50,6 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
   onOpenMt5Import,
   onResetData,
 }) => {
-  const [showGuide, setShowGuide] = React.useState(true);
   const globalStats = calculateGlobalStats(experiments);
   const netSign = globalStats.netR >= 0 ? '+' : '';
   const expSign = globalStats.expectancy >= 0 ? '+' : '';
@@ -111,75 +110,6 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
           </button>
         </div>
       </div>
-
-      {/* Methodology & Quick-Start Guide Banner for First Impression */}
-      {showGuide && (
-        <div className="relative bg-[#141624] border border-slate-700/70 p-5 rounded-2xl shadow-lg">
-          <div className="flex items-start justify-between gap-4 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#00FF66]/15 border border-[#00FF66]/30 flex items-center justify-center text-[#00FF66]">
-                <Sparkles className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-sm sm:text-base font-bold text-white">
-                  Strategy Testing Workflow
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Four steps to systematically backtest and measure your edge
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowGuide(false)}
-              className="text-xs text-slate-400 hover:text-white px-2 py-1 rounded-lg hover:bg-slate-800 transition-colors shrink-0"
-            >
-              Dismiss
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-            <div className="p-3 bg-[#0B0C12]/80 border border-slate-800 rounded-xl">
-              <div className="flex items-center gap-1.5 font-bold text-[#FF8C00] mb-1">
-                <span className="w-5 h-5 rounded-full bg-[#FF8C00]/20 flex items-center justify-center text-[11px]">1</span>
-                <span>Define Setup</span>
-              </div>
-              <p className="text-slate-300 leading-relaxed">
-                Choose the instrument, timeframe, session, and entry/exit criteria.
-              </p>
-            </div>
-
-            <div className="p-3 bg-[#0B0C12]/80 border border-slate-800 rounded-xl">
-              <div className="flex items-center gap-1.5 font-bold text-sky-400 mb-1">
-                <span className="w-5 h-5 rounded-full bg-sky-400/20 flex items-center justify-center text-[11px]">2</span>
-                <span>Log Executions</span>
-              </div>
-              <p className="text-slate-300 leading-relaxed">
-                Record 20–50 consecutive trades manually or import an MT4/MT5 statement.
-              </p>
-            </div>
-
-            <div className="p-3 bg-[#0B0C12]/80 border border-slate-800 rounded-xl">
-              <div className="flex items-center gap-1.5 font-bold text-[#00FF66] mb-1">
-                <span className="w-5 h-5 rounded-full bg-[#00FF66]/20 flex items-center justify-center text-[11px]">3</span>
-                <span>Review Expectancy</span>
-              </div>
-              <p className="text-slate-300 leading-relaxed">
-                Examine win rate, profit factor, expected value (EV), and drawdown curves.
-              </p>
-            </div>
-
-            <div className="p-3 bg-[#0B0C12]/80 border border-slate-800 rounded-xl">
-              <div className="flex items-center gap-1.5 font-bold text-purple-400 mb-1">
-                <span className="w-5 h-5 rounded-full bg-purple-400/20 flex items-center justify-center text-[11px]">4</span>
-                <span>Export & Share</span>
-              </div>
-              <p className="text-slate-300 leading-relaxed">
-                Generate clean report cards and formatted Markdown messages for groups.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Trading Objectives & Key Metrics Section (Inspired by Goat Funded Trader) */}
       <div>
@@ -433,96 +363,44 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-              Recent Research Experiments
+              Research Experiments
             </h3>
             <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-              Click any experiment to inspect execution setups or dispatch 1-click WhatsApp research cards.
+              Select an experiment to inspect trade logs, expectancy curves, and report cards.
             </p>
           </div>
         </div>
 
         {experiments.length === 0 ? (
-          <div className="bg-[#12131D] border border-slate-800/80 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-xl">
-            <div className="w-16 h-16 rounded-2xl bg-[#1A1D2B] border border-slate-700 flex items-center justify-center mx-auto text-[#00FF66] shadow-[0_0_25px_rgba(0,255,102,0.15)]">
-              <Sparkles className="w-8 h-8" />
+          <div className="bg-[#12131D] border border-slate-800/80 p-8 sm:p-10 rounded-2xl text-center space-y-4 shadow-xl">
+            <div className="w-12 h-12 rounded-xl bg-[#171926] border border-slate-700 flex items-center justify-center mx-auto text-slate-300">
+              <FileSpreadsheet className="w-6 h-6 text-[#00FF66]" />
             </div>
-            <div className="max-w-xl mx-auto">
-              <h4 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-                Your Quantitative Trading Database is Ready
+            <div className="max-w-md mx-auto">
+              <h4 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                No Trading Studies Recorded
               </h4>
-              <p className="text-sm text-slate-400 mt-2 leading-relaxed">
-                Choose how you would like to begin your research session. You can create a new hypothesis from scratch, sync MetaTrader 5 trade history, or explore the pre-configured sample backtest studies.
+              <p className="text-xs sm:text-sm text-slate-400 mt-1.5 leading-relaxed">
+                Import backtest data from FX Replay / MetaTrader statements, or formulate a new strategy experiment to track your mathematical edge.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto pt-2 text-left">
-              {/* Option 1: New Study */}
-              <div
-                onClick={onOpenNewExperiment}
-                className="p-5 rounded-2xl bg-[#171926] border border-slate-800 hover:border-[#00FF66] transition-all cursor-pointer group flex flex-col justify-between"
-              >
-                <div>
-                  <div className="w-10 h-10 rounded-xl bg-[#00FF66]/15 text-[#00FF66] flex items-center justify-center font-bold mb-3 group-hover:scale-105 transition-transform">
-                    <Plus className="w-5 h-5 stroke-[2.5]" />
-                  </div>
-                  <h5 className="font-bold text-white text-base group-hover:text-[#00FF66] transition-colors">
-                    New Experiment
-                  </h5>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Formulate a setup hypothesis with session, timeframe, and RR targets.
-                  </p>
-                </div>
-                <div className="mt-4 text-xs font-bold text-[#00FF66] flex items-center gap-1">
-                  <span>Start Blank</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </div>
-              </div>
-
-              {/* Option 2: MT5 CSV */}
-              <div
+            <div className="flex items-center justify-center gap-3 pt-2 flex-wrap">
+              <button
                 onClick={onOpenMt5Import}
-                className="p-5 rounded-2xl bg-[#171926] border border-slate-800 hover:border-sky-400 transition-all cursor-pointer group flex flex-col justify-between"
+                className="px-5 py-2.5 bg-[#00FF66] hover:bg-[#00E05A] text-black text-xs sm:text-sm font-extrabold rounded-xl uppercase tracking-wider flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(0,255,102,0.25)]"
               >
-                <div>
-                  <div className="w-10 h-10 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center font-bold mb-3 group-hover:scale-105 transition-transform">
-                    <FileSpreadsheet className="w-5 h-5" />
-                  </div>
-                  <h5 className="font-bold text-white text-base group-hover:text-sky-400 transition-colors">
-                    FX Replay / MT5 / CSV Importer
-                  </h5>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Import backtests directly from FX Replay or execution statements from MetaTrader 5.
-                  </p>
-                </div>
-                <div className="mt-4 text-xs font-bold text-sky-400 flex items-center gap-1">
-                  <span>Import Data</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </div>
-              </div>
+                <FileSpreadsheet className="w-4 h-4" />
+                <span>Import Backtest</span>
+              </button>
 
-              {/* Option 3: Load Sample Studies */}
-              <div
-                onClick={() => {
-                  if (onResetData) onResetData();
-                }}
-                className="p-5 rounded-2xl bg-[#171926] border border-slate-800 hover:border-amber-400 transition-all cursor-pointer group flex flex-col justify-between"
+              <button
+                onClick={onOpenNewExperiment}
+                className="px-5 py-2.5 bg-[#171926] hover:bg-[#1E2132] text-slate-200 hover:text-white text-xs sm:text-sm font-bold rounded-xl border border-slate-700 flex items-center gap-2 transition-colors"
               >
-                <div>
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center font-bold mb-3 group-hover:scale-105 transition-transform">
-                    <Zap className="w-5 h-5" />
-                  </div>
-                  <h5 className="font-bold text-white text-base group-hover:text-amber-400 transition-colors">
-                    Load Demo Studies
-                  </h5>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Explore 7 pre-configured studies (London Silver Bullet, NY AMD, etc.).
-                  </p>
-                </div>
-                <div className="mt-4 text-xs font-bold text-amber-400 flex items-center gap-1">
-                  <span>Explore Demo</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </div>
-              </div>
+                <Plus className="w-4 h-4" />
+                <span>New Experiment</span>
+              </button>
             </div>
           </div>
         ) : (
