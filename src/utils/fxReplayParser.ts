@@ -270,7 +270,7 @@ export function parseFxReplayCsv(
     const notes = `FX Replay #${rawId}${pnlNote ? ` | ${pnlNote}` : ''}`;
 
     trades.push({
-      id: `fx-${rawId || i}-${Date.now()}`,
+      id: rawId ? `fx-${rawId}` : `fx-${i}`,
       tradeNumber: i,
       date: dateStr,
       pair,

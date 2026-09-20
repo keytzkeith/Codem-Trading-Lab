@@ -26,6 +26,7 @@ import {
   List,
   Dices,
   BrainCircuit,
+  FileSpreadsheet,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -42,6 +43,7 @@ interface ExperimentDetailModalProps {
   onClose: () => void;
   onUpdate: (updated: Experiment) => void;
   onOpenWhatsAppShare: (exp: Experiment) => void;
+  onOpenImportMore?: () => void;
 }
 
 export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
@@ -49,6 +51,7 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
   onClose,
   onUpdate,
   onOpenWhatsAppShare,
+  onOpenImportMore,
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'trades' | 'montecarlo' | 'findings' | 'screenshots'>('overview');
   const [isEditingFinding, setIsEditingFinding] = useState(false);
@@ -452,10 +455,20 @@ export const ExperimentDetailModal: React.FC<ExperimentDetailModalProps> = ({
                   ))}
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                   <span className="text-xs text-slate-400 font-mono font-semibold">
                     Showing {filteredTrades.length} of {experiment.trades.length} trades
                   </span>
+                  {onOpenImportMore && (
+                    <button
+                      onClick={onOpenImportMore}
+                      className="px-3 py-1.5 bg-[#171926] hover:bg-[#1E2132] text-sky-400 hover:text-sky-300 font-bold text-xs rounded-xl border border-sky-500/30 flex items-center gap-1.5 transition-colors shadow-sm"
+                      title="Import incremental trade samples into this study"
+                    >
+                      <FileSpreadsheet className="w-3.5 h-3.5" />
+                      <span>Import Next Sample</span>
+                    </button>
+                  )}
                   <button
                     onClick={() => setShowAddTradeForm(!showAddTradeForm)}
                     className="px-3.5 py-1.5 bg-[#00FF66] hover:bg-[#00E05A] text-black font-extrabold text-xs rounded-xl flex items-center gap-1.5 shadow-[0_0_10px_rgba(0,255,102,0.25)] transition-all"

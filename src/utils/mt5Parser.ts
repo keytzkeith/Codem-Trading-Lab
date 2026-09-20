@@ -126,8 +126,13 @@ export function parseMt5OrCsvText(
       takeProfit = priceCandidates[2];
     }
 
+    // Check for ticket number (often first column in MT4/MT5 statements)
+    const ticketMatch = parts[0]?.match(/^\d{5,12}$/) || line.match(/ticket[:\s]+(\d+)/i);
+    const ticket = ticketMatch ? (ticketMatch[1] || ticketMatch[0]) : null;
+    const stableId = ticket ? `mt5-${ticket}` : `trade-${index + 1}-${date.replace(/-/g, '')}`;
+
     trades.push({
-      id: `trade-${index + 1}-${Date.now()}`,
+      id: stableId,
       tradeNumber: tradeNum,
       date,
       pair,
@@ -139,7 +144,7 @@ export function parseMt5OrCsvText(
       plannedRR: plannedRR,
       realizedRR: Number(realizedRR.toFixed(2)),
       result,
-      notes: notes || `Imported trade #${tradeNum}`,
+      notes: notes || (ticket ? `Ticket #${ticket}` : `Imported trade #${tradeNum}`),
       setupRuleFollowed: true,
     });
   });

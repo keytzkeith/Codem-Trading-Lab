@@ -77,7 +77,13 @@ function TradingAppInner() {
   const [shareExp, setShareExp] = useState<Experiment | null>(null);
   const [showNewModal, setShowNewModal] = useState(false);
   const [showMt5Modal, setShowMt5Modal] = useState(false);
+  const [mt5TargetExpId, setMt5TargetExpId] = useState<string | null>(null);
   const [spotlightExp, setSpotlightExp] = useState<Experiment | null>(null);
+
+  const handleOpenMt5Import = (targetId?: string) => {
+    setMt5TargetExpId(targetId || null);
+    setShowMt5Modal(true);
+  };
 
   // Check URL search parameters on mount (?exp=BT-001 or ?study=BT-001)
   useEffect(() => {
@@ -222,23 +228,41 @@ function TradingAppInner() {
     }
   };
 
-  // Import MT5 experiment with Firestore sync
-  const handleImportMt5 = async (newExp: Experiment) => {
-    const sanitized = deduplicateExperiments([newExp, ...experiments]);
-    setExperiments(sanitized);
+  // Import or Update MT5 / FX Replay experiment with Firestore sync
+  const handleImportMt5 = async (
+    importedExp: Experiment,
+    isUpdate?: boolean,
+    summary?: { addedCount: number; updatedCount: number; totalCount: number }
+  ) => {
+    if (isUpdate) {
+      setExperiments((prev) => prev.map((e) => (e.id === importedExp.id ? importedExp : e)));
+      if (detailExp?.id === importedExp.id) {
+        setDetailExp(importedExp);
+      }
+      const addedText = summary
+        ? `Added +${summary.addedCount} new trades, updated ${summary.updatedCount}`
+        : 'Updated trade records';
+      showToast(`Updated [${importedExp.id}]: ${addedText} (Total: ${importedExp.trades.length} trades)`);
+    } else {
+      const sanitized = deduplicateExperiments([importedExp, ...experiments]);
+      setExperiments(sanitized);
+      showToast(`Saved ${importedExp.trades.length} trades (${importedExp.id})!`);
+    }
+
     setShowMt5Modal(false);
-    showToast(`Saved ${newExp.trades.length} trades (${newExp.id})!`);
+    setMt5TargetExpId(null);
+
     confetti({
       particleCount: 50,
       spread: 70,
       origin: { y: 0.8 },
-      colors: ['#38bdf8', '#34d399', '#fbbf24'],
+      colors: ['#00FF66', '#38bdf8', '#fbbf24'],
     });
 
     if (user) {
       try {
         setIsSyncing(true);
-        await saveExperimentToFirestore(newExp, user.uid);
+        await saveExperimentToFirestore(importedExp, user.uid);
       } catch (e) {
         console.warn('Saved to local storage, will sync when cloud connected:', e);
       } finally {
@@ -419,7 +443,7 @@ function TradingAppInner() {
         isSyncing={isSyncing}
         onOpenAuth={() => setShowAuthModal(true)}
         onOpenNewExperiment={() => setShowNewModal(true)}
-        onOpenMt5Import={() => setShowMt5Modal(true)}
+        onOpenMt5Import={handleOpenMt5Import}
         onResetData={handleResetData}
         onClearAllData={handleClearAllData}
         onExportBackup={handleExportBackup}
@@ -433,7 +457,7 @@ function TradingAppInner() {
             onSelectExperiment={(exp) => setDetailExp(exp)}
             onOpenWhatsAppShare={(exp) => setShareExp(exp)}
             onOpenNewExperiment={() => setShowNewModal(true)}
-            onOpenMt5Import={() => setShowMt5Modal(true)}
+            onOpenMt5Import={handleOpenMt5Import}
             onResetData={handleResetData}
           />
         )}
@@ -444,7 +468,7 @@ function TradingAppInner() {
             onSelectExperiment={(exp) => setDetailExp(exp)}
             onOpenWhatsAppShare={(exp) => setShareExp(exp)}
             onOpenNewExperiment={() => setShowNewModal(true)}
-            onOpenMt5Import={() => setShowMt5Modal(true)}
+            onOpenMt5Import={handleOpenMt5Import}
             onDeleteExperiment={handleDeleteExperiment}
             onResetData={handleResetData}
           />
@@ -455,7 +479,7 @@ function TradingAppInner() {
             experiments={experiments}
             onSelectExperiment={(exp) => setDetailExp(exp)}
             onOpenNewExperiment={() => setShowNewModal(true)}
-            onOpenMt5Import={() => setShowMt5Modal(true)}
+            onOpenMt5Import={handleOpenMt5Import}
           />
         )}
 
@@ -466,7 +490,7 @@ function TradingAppInner() {
             onUpdateGroups={setWhatsappGroups}
             onOpenWhatsAppShare={(exp) => setShareExp(exp)}
             onOpenNewExperiment={() => setShowNewModal(true)}
-            onOpenMt5Import={() => setShowMt5Modal(true)}
+            onOpenMt5Import={handleOpenMt5Import}
           />
         )}
       </main>
@@ -568,6 +592,9 @@ function TradingAppInner() {
             setDetailExp(null);
             setShareExp(exp);
           }}
+          onOpenImportMore={() => {
+            handleOpenMt5Import(detailExp.id);
+          }}
         />
       )}
 
@@ -583,9 +610,13 @@ function TradingAppInner() {
       {/* MODAL 4: MT5 / CSV Parser */}
       {showMt5Modal && (
         <Mt5ImportModal
-          onClose={() => setShowMt5Modal(false)}
+          onClose={() => {
+            setShowMt5Modal(false);
+            setMt5TargetExpId(null);
+          }}
           onImport={handleImportMt5}
           experiments={experiments}
+          initialTargetExperimentId={mt5TargetExpId}
         />
       )}
 
