@@ -1,4 +1,5 @@
 import { SingleTrade, SessionType, TradeDirection, TradeResult } from '../types/trade';
+import { normalizeDateStr, normalizePairStr } from './tradeReconciliation';
 
 export interface FxReplayParseResult {
   trades: SingleTrade[];
@@ -99,9 +100,8 @@ export function isFxReplayFormat(rawText: string): boolean {
   if (!rawText) return false;
   const firstLines = rawText.trim().split('\n').slice(0, 3).join(' ').toLowerCase();
   return (
-    firstLines.includes('datestart') &&
-    firstLines.includes('avgriskreward') &&
-    (firstLines.includes('rpnl') || firstLines.includes('maxriskreward') || firstLines.includes('idealtp'))
+    (firstLines.includes('datestart') || firstLines.includes('date_start') || firstLines.includes('open time') || firstLines.includes('date start')) &&
+    (firstLines.includes('avgriskreward') || firstLines.includes('risk reward') || firstLines.includes('rpnl') || firstLines.includes('maxtp') || firstLines.includes('initialsl'))
   );
 }
 
@@ -129,27 +129,38 @@ export function parseFxReplayCsv(
   const headerLine = lines[0];
   const headers = splitCsvLine(headerLine).map((h) => h.toLowerCase().trim());
 
+  // Dynamic helper to match column header variants
+  const findCol = (candidates: string[]) => {
+    return headers.findIndex((h) => {
+      const cleanH = h.replace(/[^a-z0-9]/g, '');
+      return candidates.some((c) => {
+        const cleanC = c.replace(/[^a-z0-9]/g, '');
+        return cleanH === cleanC || h.includes(c);
+      });
+    });
+  };
+
   // Map header column indices
   const colIndex = {
-    id: headers.indexOf('id'),
-    dateStart: headers.indexOf('datestart'),
-    dateEnd: headers.indexOf('dateend'),
-    pair: headers.indexOf('pair'),
-    rPnL: headers.indexOf('rpnl'),
-    uPnL: headers.indexOf('upnl'),
-    side: headers.indexOf('side'),
-    entryPrice: headers.indexOf('entryprice'),
-    initialSL: headers.indexOf('initialsl'),
-    maxTP: headers.indexOf('maxtp'),
-    idealTP: headers.indexOf('idealtp'),
-    amount: headers.indexOf('amount'),
-    status: headers.indexOf('status'),
-    tags: headers.indexOf('tags'),
-    avgClosePrice: headers.indexOf('avgcloseprice'),
-    avgRiskReward: headers.indexOf('avgriskreward'),
-    maxRiskReward: headers.indexOf('maxriskreward'),
-    initialBalance: headers.indexOf('initialbalance'),
-    currentRealizedBalance: headers.indexOf('currentrealizedbalance'),
+    id: findCol(['id', 'trade id', 'trade_id', 'tradeid', '#', 'ticket', 'order']),
+    dateStart: findCol(['datestart', 'date_start', 'date start', 'open time', 'opentime', 'time', 'entry time', 'date']),
+    dateEnd: findCol(['dateend', 'date_end', 'date end', 'close time', 'closetime', 'exit time']),
+    pair: findCol(['pair', 'symbol', 'instrument', 'asset', 'currency']),
+    rPnL: findCol(['rpnl', 'r_pnl', 'pnl', 'profit', 'net profit', 'realized pnl', 'p/l']),
+    uPnL: findCol(['upnl', 'u_pnl', 'unrealized pnl']),
+    side: findCol(['side', 'direction', 'type', 'action']),
+    entryPrice: findCol(['entryprice', 'entry_price', 'entry price', 'open price', 'entry']),
+    initialSL: findCol(['initialsl', 'initial_sl', 'initial sl', 'sl', 'stop loss', 'stoploss']),
+    maxTP: findCol(['maxtp', 'max_tp', 'max tp', 'tp', 'take profit', 'takeprofit']),
+    idealTP: findCol(['idealtp', 'ideal_tp', 'ideal tp', 'target']),
+    amount: findCol(['amount', 'size', 'lot', 'lots', 'volume']),
+    status: findCol(['status', 'state']),
+    tags: findCol(['tags', 'tag', 'label']),
+    avgClosePrice: findCol(['avgcloseprice', 'avg_close_price', 'close price', 'exit price']),
+    avgRiskReward: findCol(['avgriskreward', 'avg_risk_reward', 'risk reward', 'rr', 'r:r', 'r-multiple', 'rmultiple', 'realized rr']),
+    maxRiskReward: findCol(['maxriskreward', 'max_risk_reward', 'planned rr']),
+    initialBalance: findCol(['initialbalance', 'initial_balance', 'starting balance']),
+    currentRealizedBalance: findCol(['currentrealizedbalance', 'current_realized_balance', 'balance', 'equity']),
   };
 
   const trades: SingleTrade[] = [];
@@ -189,20 +200,20 @@ export function parseFxReplayCsv(
     // Clean Pair: strip broker prefix (e.g. "OANDA:GBPUSD" -> "GBPUSD")
     let pair = fallbackPair;
     if (rawPair) {
-      const clean = rawPair.includes(':') ? rawPair.split(':')[1].trim() : rawPair.trim();
+      const clean = normalizePairStr(rawPair);
       if (clean) {
-        pair = clean.toUpperCase();
+        pair = clean;
         detectedPair = pair;
       }
     }
 
-    // Clean Date: "2024/01/03 12:13:55" -> "2024-01-03"
+    // Clean Date: canonical YYYY-MM-DD
     let dateStr = new Date().toISOString().split('T')[0];
     let tradeSession: SessionType = 'London';
 
     if (rawDateStart) {
-      const dateParts = rawDateStart.split(' ')[0].replace(/\//g, '-');
-      if (dateParts) dateStr = dateParts;
+      const canonicalDate = normalizeDateStr(rawDateStart);
+      if (canonicalDate) dateStr = canonicalDate;
 
       // If sessionMode is auto or All Sessions, detect per trade based on timestamp & timezone
       if (sessionMode === 'auto' || sessionMode === 'All Sessions') {

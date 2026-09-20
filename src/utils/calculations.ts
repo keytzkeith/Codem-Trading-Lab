@@ -116,8 +116,22 @@ export function calculateTradeStats(trades: SingleTrade[]): CalculatedStats {
 
 export function calculateGlobalStats(experiments: Experiment[]) {
   const allTrades: SingleTrade[] = [];
+  const seenSignatures = new Set<string>();
+
   experiments.forEach((exp) => {
-    allTrades.push(...exp.trades);
+    (exp.trades || []).forEach((t) => {
+      // Deterministic signature to prevent duplicate trades from inflating global win rate
+      const cleanDate = (t.date || '').split(' ')[0].replace(/[./]/g, '-');
+      const cleanPair = (t.pair || exp.pair || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const sig = t.id && !t.id.startsWith('tr-')
+        ? `id:${t.id.toLowerCase()}`
+        : `${cleanDate}_${cleanPair}_${t.direction}_${t.result}_${Number(t.realizedRR || 0).toFixed(2)}`;
+
+      if (!seenSignatures.has(sig)) {
+        seenSignatures.add(sig);
+        allTrades.push(t);
+      }
+    });
   });
 
   const globalTradeStats = calculateTradeStats(allTrades);

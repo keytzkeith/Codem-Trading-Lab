@@ -167,6 +167,29 @@ export const Mt5ImportModal: React.FC<Mt5ImportModalProps> = ({
     return reconcileTrades(selectedExperiment.trades || [], parsedTrades);
   }, [selectedExperiment, parsedTrades, targetMode]);
 
+  // Real-time calculation of merged statistics to preview exactly how win rate and return merge
+  const mergedStatsPreview = useMemo(() => {
+    if (!selectedExperiment || parsedTrades.length === 0 || targetMode !== 'update') {
+      return null;
+    }
+    const currentTrades = selectedExperiment.trades || [];
+    const merged = mergeReconciledTrades(currentTrades, parsedTrades, {
+      preventDuplicates,
+      updateExisting,
+    });
+    const currentStats = calculateTradeStats(currentTrades);
+    const incomingOnlyStats = calculateTradeStats(parsedTrades);
+    const combinedStats = calculateTradeStats(merged);
+
+    return {
+      currentStats,
+      incomingOnlyStats,
+      combinedStats,
+      mergedCount: merged.length,
+      currentCount: currentTrades.length,
+    };
+  }, [selectedExperiment, parsedTrades, targetMode, preventDuplicates, updateExisting]);
+
   // If user switches target experiment, update local form fields
   const handleSelectTargetExperiment = (id: string) => {
     setTargetExperimentId(id);
@@ -574,6 +597,44 @@ export const Mt5ImportModal: React.FC<Mt5ImportModalProps> = ({
                   </span>
                 </div>
               </div>
+
+              {/* Live Win Rate & Yield Merged Preview Card */}
+              {mergedStatsPreview && (
+                <div className="p-3 rounded-xl bg-[#0B0D15] border border-slate-800 text-xs font-mono space-y-2">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#00FF66]" />
+                      Win Rate & Return Merged Preview
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-[#00FF66]/20 text-[#00FF66] border border-[#00FF66]/40">
+                      Consolidated (Not Added)
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="p-2 rounded-lg bg-[#141624] border border-slate-800">
+                      <div className="text-[10px] text-slate-400">Current Study ({mergedStatsPreview.currentCount})</div>
+                      <div className="text-white font-bold text-sm mt-0.5">{mergedStatsPreview.currentStats.winRate}% WR</div>
+                      <div className="text-[10px] text-slate-400 font-sans mt-0.5">
+                        {mergedStatsPreview.currentStats.netR >= 0 ? '+' : ''}{mergedStatsPreview.currentStats.netR}R
+                      </div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-[#141624] border border-slate-800">
+                      <div className="text-[10px] text-slate-400">Statement Batch ({parsedTrades.length})</div>
+                      <div className="text-amber-400 font-bold text-sm mt-0.5">{mergedStatsPreview.incomingOnlyStats.winRate}% WR</div>
+                      <div className="text-[10px] text-slate-400 font-sans mt-0.5">
+                        {mergedStatsPreview.incomingOnlyStats.netR >= 0 ? '+' : ''}{mergedStatsPreview.incomingOnlyStats.netR}R
+                      </div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-[#00FF66]/10 border border-[#00FF66]/30">
+                      <div className="text-[10px] text-[#00FF66] font-bold">Unified Study ({mergedStatsPreview.mergedCount})</div>
+                      <div className="text-[#00FF66] font-extrabold text-sm mt-0.5">{mergedStatsPreview.combinedStats.winRate}% WR</div>
+                      <div className="text-[10px] text-[#00FF66] font-sans font-bold mt-0.5">
+                        {mergedStatsPreview.combinedStats.netR >= 0 ? '+' : ''}{mergedStatsPreview.combinedStats.netR}R
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Deduplication & Update Options */}
               <div className="pt-1 space-y-2 border-t border-slate-800/80">

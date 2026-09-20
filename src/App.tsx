@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Experiment } from './types/trade';
 import { INITIAL_EXPERIMENTS, DEMO_EXPERIMENTS, STORAGE_KEY, WHATSAPP_GROUPS_KEY, DEFAULT_WHATSAPP_GROUPS } from './data/initialData';
 import { deduplicateExperiments } from './utils/idGenerator';
+import { mergeTwoExperiments, deduplicateAndMergeExperiments } from './utils/tradeReconciliation';
 import { Navbar } from './components/Navbar';
 import { OverviewDashboard } from './components/OverviewDashboard';
 import { ExperimentsList } from './components/ExperimentsList';
@@ -205,10 +206,16 @@ function TradingAppInner() {
 
   // Add new experiment with Firestore sync
   const handleSaveNewExperiment = async (newExp: Experiment) => {
-    const sanitized = deduplicateExperiments([newExp, ...experiments]);
-    setExperiments(sanitized);
+    let finalExp = newExp;
+    setExperiments((prev) => {
+      const consolidated = deduplicateAndMergeExperiments([newExp, ...prev]);
+      const found = consolidated.find((e) => e.id.toUpperCase() === newExp.id.toUpperCase());
+      if (found) finalExp = found;
+      return consolidated;
+    });
+
     setShowNewModal(false);
-    showToast(`Saved ${newExp.id} to Workspace!`);
+    showToast(`Saved ${finalExp.id} to Workspace!`);
     confetti({
       particleCount: 40,
       spread: 60,
@@ -219,7 +226,7 @@ function TradingAppInner() {
     if (user) {
       try {
         setIsSyncing(true);
-        await saveExperimentToFirestore(newExp, user.uid);
+        await saveExperimentToFirestore(finalExp, user.uid);
       } catch (e) {
         console.warn('Saved to local storage, will sync when cloud connected:', e);
       } finally {
@@ -234,20 +241,40 @@ function TradingAppInner() {
     isUpdate?: boolean,
     summary?: { addedCount: number; updatedCount: number; totalCount: number }
   ) => {
-    if (isUpdate) {
-      setExperiments((prev) => prev.map((e) => (e.id === importedExp.id ? importedExp : e)));
-      if (detailExp?.id === importedExp.id) {
-        setDetailExp(importedExp);
+    let finalExp: Experiment = importedExp;
+
+    setExperiments((prev) => {
+      const match = prev.find(
+        (e) => e.id.trim().toUpperCase() === importedExp.id.trim().toUpperCase()
+      );
+
+      let workingList: Experiment[];
+      if (match || isUpdate) {
+        const target = match || prev[0];
+        finalExp = target ? mergeTwoExperiments(target, importedExp) : importedExp;
+        workingList = prev.map((e) => (e.id === (target?.id || importedExp.id) ? finalExp : e));
+      } else {
+        workingList = [importedExp, ...prev];
       }
-      const addedText = summary
-        ? `Added +${summary.addedCount} new trades, updated ${summary.updatedCount}`
-        : 'Updated trade records';
-      showToast(`Updated [${importedExp.id}]: ${addedText} (Total: ${importedExp.trades.length} trades)`);
-    } else {
-      const sanitized = deduplicateExperiments([importedExp, ...experiments]);
-      setExperiments(sanitized);
-      showToast(`Saved ${importedExp.trades.length} trades (${importedExp.id})!`);
+
+      const consolidated = deduplicateAndMergeExperiments(workingList);
+      const matchedInConsolidated = consolidated.find(
+        (e) => e.id.toUpperCase() === finalExp.id.toUpperCase()
+      );
+      if (matchedInConsolidated) finalExp = matchedInConsolidated;
+      return consolidated;
+    });
+
+    if (detailExp) {
+      if (detailExp.id.toUpperCase() === finalExp.id.toUpperCase()) {
+        setDetailExp(finalExp);
+      }
     }
+
+    const addedText = summary
+      ? `Merged +${summary.addedCount} new trades, updated ${summary.updatedCount}`
+      : `Reconciled ${finalExp.trades.length} trades`;
+    showToast(`Updated [${finalExp.id}]: ${addedText} (Total: ${finalExp.trades.length} trades)`);
 
     setShowMt5Modal(false);
     setMt5TargetExpId(null);
@@ -262,7 +289,7 @@ function TradingAppInner() {
     if (user) {
       try {
         setIsSyncing(true);
-        await saveExperimentToFirestore(importedExp, user.uid);
+        await saveExperimentToFirestore(finalExp, user.uid);
       } catch (e) {
         console.warn('Saved to local storage, will sync when cloud connected:', e);
       } finally {

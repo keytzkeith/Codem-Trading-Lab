@@ -1,5 +1,6 @@
 import { SingleTrade, SessionType, TradeDirection, TradeResult } from '../types/trade';
 import { isFxReplayFormat, parseFxReplayCsv, determineSessionFromTimestamp } from './fxReplayParser';
+import { normalizeDateStr, normalizePairStr } from './tradeReconciliation';
 
 export { isFxReplayFormat, parseFxReplayCsv, determineSessionFromTimestamp };
 
@@ -67,7 +68,7 @@ export function parseMt5OrCsvText(
     // Check for pair
     const pairMatch = line.match(/(EURUSD|GBPUSD|USDJPY|XAUUSD|AUDUSD|USDCAD|NZDUSD|USDCHF|GBPJPY|EURJPY|US100|NAS100|US30|BTCUSD|ETHUSD)/i);
     if (pairMatch) {
-      pair = pairMatch[0].toUpperCase();
+      pair = normalizePairStr(pairMatch[0]) || defaultPair;
     }
 
     // Determine Realized R
@@ -91,12 +92,12 @@ export function parseMt5OrCsvText(
     const fullTimeMatch = line.match(/(\d{4}[-/.]\d{2}[-/.]\d{2})[ T](\d{1,2}:\d{2}(?::\d{2})?)/);
     const dateMatch = line.match(/(\d{4}[-/.]\d{2}[-/.]\d{2})|(\d{2}[-/.]\d{2}[-/.]\d{4})/);
     if (fullTimeMatch) {
-      date = fullTimeMatch[1].replace(/\//g, '-');
+      date = normalizeDateStr(fullTimeMatch[1]) || fullTimeMatch[1].replace(/[./]/g, '-');
       if (defaultSession === 'auto' || defaultSession === 'All Sessions') {
         session = determineSessionFromTimestamp(`${fullTimeMatch[1]} ${fullTimeMatch[2]}`, timezoneOffsetHours);
       }
     } else if (dateMatch) {
-      date = dateMatch[0].replace(/\//g, '-');
+      date = normalizeDateStr(dateMatch[0]) || dateMatch[0].replace(/[./]/g, '-');
       if (defaultSession === 'auto' || defaultSession === 'All Sessions') {
         session = determineSessionFromTimestamp(line, timezoneOffsetHours);
       }

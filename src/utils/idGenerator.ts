@@ -1,4 +1,5 @@
 import { Experiment, TradeType } from '../types/trade';
+import { deduplicateAndMergeExperiments } from './tradeReconciliation';
 
 export function getNextUniqueExperimentId(
   existingExperiments: Experiment[],
@@ -30,36 +31,11 @@ export function getNextUniqueExperimentId(
   return candidate;
 }
 
+/**
+ * Reconciles and merges duplicate experiments and duplicate trades.
+ * Instead of cloning duplicate studies as "BT-001-1", this consolidates them into the root study
+ * with clean, unified trade arrays and accurate, merged win rate.
+ */
 export function deduplicateExperiments(experiments: Experiment[]): Experiment[] {
-  const seenIds = new Set<string>();
-  return experiments.map((exp, index) => {
-    let cleanId = exp.id || `EXP-${index + 1}`;
-    let uniqueId = cleanId;
-    let counter = 1;
-
-    while (seenIds.has(uniqueId)) {
-      uniqueId = `${cleanId}-${counter}`;
-      counter++;
-    }
-    seenIds.add(uniqueId);
-
-    // Also deduplicate trade IDs inside the experiment
-    const seenTradeIds = new Set<string>();
-    const sanitizedTrades = exp.trades.map((tr, tIdx) => {
-      let tId = tr.id || `tr-${uniqueId}-${tIdx + 1}`;
-      let tCounter = 1;
-      while (seenTradeIds.has(tId)) {
-        tId = `tr-${uniqueId}-${tIdx + 1}-${tCounter}`;
-        tCounter++;
-      }
-      seenTradeIds.add(tId);
-      return { ...tr, id: tId };
-    });
-
-    return {
-      ...exp,
-      id: uniqueId,
-      trades: sanitizedTrades,
-    };
-  });
+  return deduplicateAndMergeExperiments(experiments);
 }
